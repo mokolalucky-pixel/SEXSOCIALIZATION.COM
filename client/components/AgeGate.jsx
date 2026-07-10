@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useRouter } from 'next/router'
 
 /**
  * AgeGate — shown before the registration form.
@@ -9,7 +8,6 @@ import { useRouter } from 'next/router'
  *  onConfirm   () => void   Called when user confirms 18+
  */
 export default function AgeGate({ onConfirm }) {
-  const router = useRouter()
   const [checked, setChecked] = useState(false)
 
   return (
@@ -44,7 +42,7 @@ export default function AgeGate({ onConfirm }) {
             I am 18+ — Continue
           </button>
           <button
-            onClick={() => router.push('/')}
+            onClick={() => { window.location.href = 'https://www.google.com' }}
             className="text-white/50 text-sm hover:text-white/80 transition-colors"
           >
             Leave this site

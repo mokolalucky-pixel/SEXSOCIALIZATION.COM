@@ -16,7 +16,7 @@ export default function AcceptInvitePage() {
   const handleAccept = async () => {
     if (!user) {
       // Redirect to register/login with the invite ID preserved
-      router.push(`/auth/register?inviteId=${inviteId}`)
+      router.push(`/auth/register?inviteId=${encodeURIComponent(inviteId)}`)
       return
     }
 

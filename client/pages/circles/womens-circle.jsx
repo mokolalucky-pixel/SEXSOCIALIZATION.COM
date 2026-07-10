@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore'
+import {
+  collection, query, orderBy, onSnapshot, addDoc, serverTimestamp,
+  doc, getDoc,
+} from 'firebase/firestore'
 import { auth, db } from '../../../firebase/firebaseConfig'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import Navbar from '../../components/Navbar'
@@ -20,7 +23,6 @@ export default function WomensCirclePage() {
 
     // Client-side pre-check (server rules are the authoritative guard)
     const checkAccess = async () => {
-      const { doc, getDoc } = await import('firebase/firestore')
       const snap = await getDoc(doc(db, 'users', user.uid))
       if (!snap.exists()) { setAccess(false); return }
       const data = snap.data()

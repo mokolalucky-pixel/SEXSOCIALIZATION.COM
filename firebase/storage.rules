@@ -14,10 +14,15 @@ service firebase.storage {
 
     // ─── Chat media (partners only) ───────────────────────────────────────
     // Only the two partners in a chat may read/write media in that chat folder.
+    // chatId is always the sorted pair "uid1_uid2" where uid1 < uid2.
     match /chats/{chatId}/{allPaths=**} {
       allow read, write: if request.auth != null &&
-        (chatId.matches(request.auth.uid + '_.*') ||
-         chatId.matches('.*_' + request.auth.uid)) &&
+        (
+          // Current user is the first part of the sorted pair
+          chatId.matches('^' + request.auth.uid + '_[^_]+$') ||
+          // Current user is the second part of the sorted pair
+          chatId.matches('^[^_]+_' + request.auth.uid + '$')
+        ) &&
         request.resource.size < 20 * 1024 * 1024 &&  // 20 MB limit
         (request.resource.contentType.matches('image/.*') ||
          request.resource.contentType.matches('video/.*'));

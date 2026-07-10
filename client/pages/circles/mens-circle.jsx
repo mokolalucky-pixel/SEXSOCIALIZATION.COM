@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore'
+import {
+  collection, query, orderBy, onSnapshot, addDoc, serverTimestamp,
+  doc, getDoc,
+} from 'firebase/firestore'
 import { auth, db } from '../../../firebase/firebaseConfig'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import Navbar from '../../components/Navbar'
@@ -19,7 +22,6 @@ export default function MensCirclePage() {
     if (!user) { router.push('/auth/login'); return }
 
     const checkAccess = async () => {
-      const { doc, getDoc } = await import('firebase/firestore')
       const snap = await getDoc(doc(db, 'users', user.uid))
       if (!snap.exists()) { setAccess(false); return }
       const data = snap.data()

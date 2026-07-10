@@ -9,6 +9,18 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import Navbar from '../../components/Navbar'
 import toast, { Toaster } from 'react-hot-toast'
 
+/** Only allow blob: (local preview) and https: URLs to prevent XSS via javascript: URIs. */
+function sanitizePhotoUrl(url) {
+  if (!url) return null
+  try {
+    const parsed = new URL(url)
+    if (parsed.protocol === 'https:' || parsed.protocol === 'blob:') return url
+  } catch {
+    // not a valid URL
+  }
+  return null
+}
+
 export default function EditProfilePage() {
   const router = useRouter()
   const [user, userLoading] = useAuthState(auth)
@@ -27,7 +39,7 @@ export default function EditProfilePage() {
       if (!snap.exists()) return
       const data = snap.data()
       setValue('displayName', data.displayName || '')
-      setPhotoPreview(data.photoURL || null)
+      setPhotoPreview(sanitizePhotoUrl(data.photoURL) || null)
     }
     loadProfile()
   }, [user, userLoading, router, setValue])

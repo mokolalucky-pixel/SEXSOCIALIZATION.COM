@@ -41,7 +41,7 @@ export default function ProfilePage() {
     )
   }
 
-  const joinedDate = profile.joinedAt?.toDate
+  const joinedDate = profile.joinedAt?.toDate?.()
     ? format(profile.joinedAt.toDate(), 'MMMM yyyy')
     : 'Recently'
 
