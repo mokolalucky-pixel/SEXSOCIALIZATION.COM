@@ -1,4 +1,4 @@
-# SEXSOCIALIZATION.COM
+# Sexsocialization.com
 
 Sexsocialization is a social platform designed for couples in long-distance relationships to maintain emotional connection and intentional intimacy through private, partner-first virtual interaction.
 
