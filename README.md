@@ -4,7 +4,7 @@ Sexsocialization is a social platform designed for couples in long-distance rela
 
 ## Core concept
 
-**Sexsocialization (noun):**  
+**sexsocialization (noun):**  
 The process of maintaining intimacy and emotional connection in a long-distance relationship through virtual interactions (such as messaging, video calling, and social platforms), with the goal of strengthening a romantic bond.
 
 ## Product requirements
@@ -16,7 +16,7 @@ The process of maintaining intimacy and emotional connection in a long-distance 
 ### Partner-first onboarding
 - A user joins the platform and sends an invite to their partner
 - Chat access is enabled once the invited partner accepts
-- The platform is intended for **male/female partner pairing** for partner-private interaction
+- Current platform rule: partner-private onboarding supports **male/female partner pairing**
 
 ### Circles
 - **Women’s Circle**: relationship support among women
