@@ -1,0 +1,114 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Helper functions ────────────────────────────────────────────────
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return request.auth.uid == uid;
+    }
+
+    function getUserData(uid) {
+      return get(/databases/$(database)/documents/users/$(uid)).data;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && getUserData(request.auth.uid).ageVerified == true;
+    }
+
+    function hasLinkedPartner() {
+      return isSignedIn() && getUserData(request.auth.uid).partnerId != null;
+    }
+
+    function isPartnerOf(uid) {
+      let userData = getUserData(request.auth.uid);
+      return isSignedIn() && userData.partnerId == uid;
+    }
+
+    function userGender() {
+      return getUserData(request.auth.uid).gender;
+    }
+
+    // ─── Users collection ────────────────────────────────────────────────
+    match /users/{uid} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(uid);
+      allow update: if isOwner(uid);
+      allow delete: if isOwner(uid);
+    }
+
+    // ─── Partner invites ─────────────────────────────────────────────────
+    match /invites/{inviteId} {
+      allow read: if isSignedIn() &&
+        (resource.data.senderId == request.auth.uid ||
+         resource.data.recipientEmail == request.auth.token.email);
+      allow create: if isSignedIn() && request.resource.data.senderId == request.auth.uid;
+      allow update: if isSignedIn() &&
+        resource.data.recipientEmail == request.auth.token.email;
+      allow delete: if isSignedIn() && resource.data.senderId == request.auth.uid;
+    }
+
+    // ─── Private chat (partners only) ────────────────────────────────────
+    match /chats/{chatId} {
+      allow read, write: if isSignedIn() && hasLinkedPartner() &&
+        (chatId == request.auth.uid + '_' + getUserData(request.auth.uid).partnerId ||
+         chatId == getUserData(request.auth.uid).partnerId + '_' + request.auth.uid);
+
+      match /messages/{messageId} {
+        allow read, write: if isSignedIn() && hasLinkedPartner() &&
+          (chatId == request.auth.uid + '_' + getUserData(request.auth.uid).partnerId ||
+           chatId == getUserData(request.auth.uid).partnerId + '_' + request.auth.uid);
+      }
+    }
+
+    // ─── Mixed Circle (all verified users with a partner) ────────────────
+    match /circles/mixed/posts/{postId} {
+      allow read: if isVerifiedUser() && hasLinkedPartner();
+      allow create: if isVerifiedUser() && hasLinkedPartner() &&
+        request.resource.data.authorId == request.auth.uid;
+      allow update, delete: if isVerifiedUser() &&
+        resource.data.authorId == request.auth.uid;
+    }
+
+    // ─── Women's Circle (female users only) ──────────────────────────────
+    match /circles/womens/posts/{postId} {
+      allow read: if isVerifiedUser() && hasLinkedPartner() && userGender() == 'female';
+      allow create: if isVerifiedUser() && hasLinkedPartner() &&
+        userGender() == 'female' &&
+        request.resource.data.authorId == request.auth.uid;
+      allow update, delete: if isVerifiedUser() && userGender() == 'female' &&
+        resource.data.authorId == request.auth.uid;
+    }
+
+    // ─── Men's Circle (male users only) ──────────────────────────────────
+    match /circles/mens/posts/{postId} {
+      allow read: if isVerifiedUser() && hasLinkedPartner() && userGender() == 'male';
+      allow create: if isVerifiedUser() && hasLinkedPartner() &&
+        userGender() == 'male' &&
+        request.resource.data.authorId == request.auth.uid;
+      allow update, delete: if isVerifiedUser() && userGender() == 'male' &&
+        resource.data.authorId == request.auth.uid;
+    }
+
+    // ─── Private Circle (you and your partner only) ───────────────────────
+    match /circles/private/{partnerPairId}/posts/{postId} {
+      allow read, write: if isSignedIn() && hasLinkedPartner() &&
+        (partnerPairId == request.auth.uid + '_' + getUserData(request.auth.uid).partnerId ||
+         partnerPairId == getUserData(request.auth.uid).partnerId + '_' + request.auth.uid);
+    }
+
+    // ─── Nudges / "Thinking of you" ───────────────────────────────────────
+    match /nudges/{nudgeId} {
+      allow read: if isSignedIn() &&
+        (resource.data.senderId == request.auth.uid ||
+         resource.data.recipientId == request.auth.uid);
+      allow create: if isSignedIn() && hasLinkedPartner() &&
+        request.resource.data.senderId == request.auth.uid &&
+        request.resource.data.recipientId == getUserData(request.auth.uid).partnerId;
+      allow delete: if isSignedIn() && resource.data.senderId == request.auth.uid;
+    }
+  }
+}
