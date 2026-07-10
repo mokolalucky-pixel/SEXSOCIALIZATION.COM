@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --rose-primary: #e91e8c;
+  --rose-light: #f472b6;
+  --rose-dark: #c2185b;
+  --purple-deep: #2d0036;
+  --purple-mid: #4a0060;
+}
+
+html,
+body {
+  min-height: 100vh;
+  background-color: var(--purple-deep);
+  color: white;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Gradient background for auth pages */
+.auth-bg {
+  background: linear-gradient(135deg, #2d0036 0%, #4a0060 50%, #2d0036 100%);
+}
+
+/* Primary button */
+.btn-primary {
+  @apply bg-[#e91e8c] hover:bg-[#c2185b] text-white font-semibold py-2 px-6 rounded-full transition-colors duration-200;
+}
+
+/* Secondary button */
+.btn-secondary {
+  @apply border border-[#e91e8c] text-[#e91e8c] hover:bg-[#e91e8c] hover:text-white font-semibold py-2 px-6 rounded-full transition-colors duration-200;
+}
+
+/* Input styling */
+.input-field {
+  @apply w-full bg-white/10 border border-white/20 text-white placeholder-white/50 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#e91e8c] focus:border-transparent;
+}
+
+/* Card */
+.card {
+  @apply bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6;
+}
