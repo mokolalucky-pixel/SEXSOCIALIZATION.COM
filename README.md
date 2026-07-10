@@ -16,7 +16,8 @@ The process of maintaining intimacy and emotional connection in a long-distance 
 ### Partner-first onboarding
 - A user joins the platform and sends an invite to their partner
 - Chat access is enabled once the invited partner accepts
-- Current platform rule: partner-private onboarding supports **male/female partner pairing**
+- Current business rule (from the original concept): partner-private onboarding supports **male/female partner pairing only**.  
+  This is a deliberate scope limitation for the first release and should be revisited in future inclusivity reviews.
 
 ### Circles
 - **Women’s Circle**: relationship support among women
