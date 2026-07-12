@@ -1,14 +1,10 @@
 import { boundarySections } from '../data/boundarySections.js'
+import { apiRequest } from './apiClient.js'
 
 const AGREEMENT_SCHEMA_VERSION = 1
-const STORAGE_PREFIX = 'sexsocialization.agreement'
 
 function normalizeEmail(user) {
-  return user?.email?.trim().toLowerCase() || 'local-user'
-}
-
-function storageKeyFor(user) {
-  return `${STORAGE_PREFIX}.${normalizeEmail(user)}`
+  return user?.email?.trim().toLowerCase() || 'current-user'
 }
 
 function nowIsoString() {
@@ -33,41 +29,22 @@ export function createAgreementDraft(user, sections = boundarySections) {
   }
 }
 
-export function loadAgreementDraft(user) {
-  if (typeof window === 'undefined') {
-    return createAgreementDraft(user)
-  }
-
-  try {
-    const storedAgreement = window.localStorage.getItem(storageKeyFor(user))
-
-    if (!storedAgreement) {
-      return createAgreementDraft(user)
-    }
-
-    const parsedAgreement = JSON.parse(storedAgreement)
-
-    if (parsedAgreement?.schemaVersion !== AGREEMENT_SCHEMA_VERSION) {
-      return createAgreementDraft(user)
-    }
-
-    return parsedAgreement
-  } catch {
-    return createAgreementDraft(user)
-  }
+export async function loadAgreementDraft(user) {
+  const { agreement } = await apiRequest('/api/agreements/draft')
+  return agreement || createAgreementDraft(user)
 }
 
-export function saveAgreementDraft(user, agreement) {
+export async function saveAgreementDraft(_user, agreement) {
   const nextAgreement = {
     ...agreement,
     updatedAt: nowIsoString(),
   }
+  const { agreement: savedAgreement } = await apiRequest('/api/agreements/draft', {
+    method: 'PUT',
+    body: JSON.stringify({ agreement: nextAgreement }),
+  })
 
-  if (typeof window !== 'undefined') {
-    window.localStorage.setItem(storageKeyFor(user), JSON.stringify(nextAgreement))
-  }
-
-  return nextAgreement
+  return savedAgreement
 }
 
 export function isAgreementItemAccepted(agreement, sectionId, itemId) {
@@ -105,5 +82,5 @@ export function countAcceptedItems(agreement) {
 }
 
 export function getPersistenceMode() {
-  return import.meta.env.VITE_AGREEMENT_STORAGE_MODE || 'local-draft'
+  return 'database-backed'
 }

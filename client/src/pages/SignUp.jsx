@@ -14,8 +14,9 @@ function SignUp() {
     confirmPassword: '',
   })
   const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
     setError('')
 
@@ -39,8 +40,16 @@ function SignUp() {
       return
     }
 
-    signup({ email: formState.email, name: formState.name })
-    navigate('/dashboard', { replace: true })
+    setIsSubmitting(true)
+
+    try {
+      await signup({ email: formState.email, name: formState.name, password: formState.password })
+      navigate('/dashboard', { replace: true })
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -93,8 +102,8 @@ function SignUp() {
 
         {error ? <p className="error-message" role="alert">{error}</p> : null}
 
-        <button className="button" type="submit">
-          Create account
+        <button className="button" type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Creating account…' : 'Create account'}
         </button>
       </form>
       <p>

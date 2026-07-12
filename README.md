@@ -9,13 +9,13 @@ A deployable Vite + React frontend with:
 - 18+ age verification gate (session-scoped)
 - Core routes: Home, Login, Sign Up, Dashboard (protected), 404
 - Shared layout with navigation and accessible skip link
-- Authentication scaffold using local storage (ready for real backend)
+- Backend authentication with HTTP-only session cookies
 - Form validation with accessible error messaging
 - Responsive styling with dark mode and focus management
 - SEO and Open Graph meta tags
 - Security headers: CSP, HSTS, X-Frame-Options, Referrer-Policy
 - GitHub Actions CI build on every push/PR
-- Vercel deployment configuration
+- Vercel Functions API for auth and agreement persistence
 
 ## Project Structure
 
@@ -52,22 +52,23 @@ vercel.json       – Vercel deploy config and security headers
 ## Local Development
 
 ```bash
-cd client
 npm install
-npm run dev
+npm --prefix client install
+npm --prefix client run dev
 ```
+
+The frontend can run locally without the backend, but signup/login/API persistence require the environment variables below.
 
 ## Build
 
 ```bash
-cd client
 npm run build
-npm run preview
+npm run lint
 ```
 
 ## Environment Variables
 
-Copy `client/.env.example` to `client/.env` and fill in values.
+Copy `.env.example` and `client/.env.example`, then configure the same values in Vercel Project Settings → Environment Variables.
 
 ## Deploying to Vercel (Go Live)
 
@@ -83,13 +84,16 @@ Merge your changes to `main`. The CI workflow will run automatically.
 ### 3. Configure Environment Variables
 In the Vercel project settings → **Environment Variables**, add:
 
-| Name                  | Value                              |
-| --------------------- | ---------------------------------- |
-| `VITE_APP_NAME`       | `SEXSOCIALIZATION.COM`             |
-| `VITE_ENVIRONMENT`    | `production`                       |
-| `VITE_AUTH_PROVIDER`  | `local-scaffold` (update when ready) |
-| `VITE_API_BASE_URL`   | *(your backend URL when you have one)* |
-| `VITE_AGREEMENT_STORAGE_MODE` | `local-draft` until a real backend/datastore is connected |
+| Name | Value |
+| ---- | ----- |
+| `DATABASE_URL` | Neon Postgres connection string |
+| `SESSION_SECRET` | Long random string used to sign session tokens |
+| `VITE_APP_NAME` | `SEXSOCIALIZATION.COM` |
+| `VITE_ENVIRONMENT` | `production` |
+| `VITE_AUTH_PROVIDER` | `backend-api` |
+| `VITE_AGREEMENT_STORAGE_MODE` | `database-backed` |
+
+Use Neon through the Vercel Marketplace for the relational database. Vercel Postgres is no longer first-party; existing Vercel Postgres databases were migrated to Neon through the Vercel Marketplace in December 2024.
 
 ### 4. Add Your Domain
 In Vercel project settings → **Domains**, add `sexsocialization.com`.
@@ -108,13 +112,12 @@ Vercel will auto-provision an HTTPS/TLS certificate via Let's Encrypt.
 
 ## Remaining Product Work
 
-These features are scaffolded but not yet connected to a real backend:
+The app now has backend auth and database-backed agreement drafts. Remaining product work:
 
-- [ ] Real authentication provider (Firebase Auth, Supabase, Auth0, etc.)
-- [ ] Persistent datastore (Firestore, Supabase, PlanetScale, etc.)
+- [ ] Partner invitation flow backed by the database
 - [ ] End-to-end encrypted messaging
 - [ ] Video calling (WebRTC service: LiveKit, Daily.co, Twilio, etc.)
 - [ ] Role-based admin moderation tools
 - [ ] Automated tests (Vitest + React Testing Library recommended)
 - [ ] Privacy Policy and Terms of Service pages (required for adult platforms)
-- [ ] Social preview image: add `client/public/social-preview.png` (1200×630 px PNG) for proper OG/Twitter card rendering
+- [x] Social preview asset for OG/Twitter card rendering

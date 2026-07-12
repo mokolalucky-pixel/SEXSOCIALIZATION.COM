@@ -1,54 +1,63 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { apiRequest } from '../services/apiClient.js'
 import { AuthContext } from './AuthContext.js'
 
-const STORAGE_KEY = 'sexsocialization.auth.user'
-
-function readStoredUser() {
-  if (typeof window === 'undefined') {
-    return null
-  }
-
-  try {
-    const rawUser = window.localStorage.getItem(STORAGE_KEY)
-    return rawUser ? JSON.parse(rawUser) : null
-  } catch {
-    return null
-  }
-}
-
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(readStoredUser)
+  const [user, setUser] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    let isMounted = true
+
+    apiRequest('/api/auth/session')
+      .then(({ user: sessionUser }) => {
+        if (isMounted) {
+          setUser(sessionUser)
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setUser(null)
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoading(false)
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   const value = useMemo(
     () => ({
       user,
+      isLoading,
       isAuthenticated: Boolean(user),
-      login: ({ email }) => {
-        const normalizedEmail = email.trim().toLowerCase()
-        const nextUser = {
-          email: normalizedEmail,
-          displayName: normalizedEmail.split('@')[0],
-        }
-
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser))
+      login: async ({ email, password }) => {
+        const { user: nextUser } = await apiRequest('/api/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ email, password }),
+        })
         setUser(nextUser)
+        return nextUser
       },
-      logout: () => {
-        window.localStorage.removeItem(STORAGE_KEY)
+      logout: async () => {
+        await apiRequest('/api/auth/logout', { method: 'POST' })
         setUser(null)
       },
-      signup: ({ email, name }) => {
-        const normalizedEmail = email.trim().toLowerCase()
-        const nextUser = {
-          email: normalizedEmail,
-          displayName: name.trim(),
-        }
-
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser))
+      signup: async ({ email, name, password }) => {
+        const { user: nextUser } = await apiRequest('/api/auth/signup', {
+          method: 'POST',
+          body: JSON.stringify({ email, name, password }),
+        })
         setUser(nextUser)
+        return nextUser
       },
     }),
-    [user],
+    [isLoading, user],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

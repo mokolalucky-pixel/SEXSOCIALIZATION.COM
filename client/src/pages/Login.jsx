@@ -5,17 +5,22 @@ import { useAuth } from '../hooks/useAuth.js'
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function Login() {
-  const { login, isAuthenticated } = useAuth()
+  const { login, isAuthenticated, isLoading } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const [formState, setFormState] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  if (isLoading) {
+    return <section className="panel">Checking your session…</section>
+  }
 
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
     setError('')
 
@@ -29,8 +34,16 @@ function Login() {
       return
     }
 
-    login({ email: formState.email })
-    navigate(location.state?.from || '/dashboard', { replace: true })
+    setIsSubmitting(true)
+
+    try {
+      await login({ email: formState.email, password: formState.password })
+      navigate(location.state?.from || '/dashboard', { replace: true })
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -62,8 +75,8 @@ function Login() {
 
         {error ? <p className="error-message" role="alert">{error}</p> : null}
 
-        <button className="button" type="submit">
-          Log in
+        <button className="button" type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Logging in…' : 'Log in'}
         </button>
       </form>
       <p>
