@@ -92,12 +92,10 @@ In the Vercel project settings → **Environment Variables**, add:
 
 ### 4. Add Your Domain
 In Vercel project settings → **Domains**, add `sexsocialization.com`.
-Then update your DNS provider (wherever you registered the domain):
-
-| Type  | Name | Value                  |
-| ----- | ---- | ---------------------- |
-| A     | @    | `76.76.21.21`          |
-| CNAME | www  | `cns.vercel-dns.com`   |
+Vercel will show you the exact DNS records to set at your domain registrar.
+Always use the values shown in the Vercel dashboard — do not hardcode IPs as
+they can change. See [Vercel DNS documentation](https://vercel.com/docs/projects/domains/add-a-domain)
+for current instructions.
 
 Vercel will auto-provision an HTTPS/TLS certificate via Let's Encrypt.
 
