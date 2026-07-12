@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { boundarySections, countBoundaryItems } from '../data/boundarySections.js'
 import {
   countAcceptedItems,
+  createAgreementDraft,
   getPersistenceMode,
   isAgreementItemAccepted,
   loadAgreementDraft,
@@ -18,10 +19,32 @@ const nextModules = [
 
 function Dashboard() {
   const { user } = useAuth()
-  const [agreement, setAgreement] = useState(() => loadAgreementDraft(user))
+  const [agreement, setAgreement] = useState(() => createAgreementDraft(user))
+  const [statusMessage, setStatusMessage] = useState('Loading saved draft…')
+  const [saveError, setSaveError] = useState('')
 
   useEffect(() => {
-    setAgreement(loadAgreementDraft(user))
+    let isMounted = true
+
+    setStatusMessage('Loading saved draft…')
+    setSaveError('')
+    loadAgreementDraft(user)
+      .then((savedAgreement) => {
+        if (isMounted) {
+          setAgreement(savedAgreement)
+          setStatusMessage('Saved to database')
+        }
+      })
+      .catch((error) => {
+        if (isMounted) {
+          setSaveError(error.message)
+          setStatusMessage('Using unsaved draft')
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
   }, [user])
 
   const totalItems = countBoundaryItems()
@@ -29,11 +52,21 @@ function Dashboard() {
   const persistenceMode = getPersistenceMode()
 
   function handleToggleItem(sectionId, itemId) {
-    setAgreement((currentAgreement) => {
-      const nextAgreement = toggleAgreementItem(currentAgreement, sectionId, itemId)
+    const nextAgreement = toggleAgreementItem(agreement, sectionId, itemId)
 
-      return saveAgreementDraft(user, nextAgreement)
-    })
+    setAgreement(nextAgreement)
+    setStatusMessage('Saving…')
+    setSaveError('')
+
+    saveAgreementDraft(user, nextAgreement)
+      .then((savedAgreement) => {
+        setAgreement(savedAgreement)
+        setStatusMessage('Saved to database')
+      })
+      .catch((error) => {
+        setSaveError(error.message)
+        setStatusMessage('Save failed')
+      })
   }
 
   return (
@@ -43,9 +76,10 @@ function Dashboard() {
           <h1 id="dashboard-title">Partner agreement workspace</h1>
           <p>Welcome back, {user?.displayName || user?.email}.</p>
           <p className="save-status">
-            Draft storage: <strong>{persistenceMode}</strong>. Last updated:{' '}
+            Draft storage: <strong>{persistenceMode}</strong>. Status: <strong>{statusMessage}</strong>. Last updated:{' '}
             <strong>{new Date(agreement.updatedAt).toLocaleString()}</strong>
           </p>
+          {saveError ? <p className="error-message" role="alert">{saveError}</p> : null}
         </div>
         <div className="status-card" aria-label="Agreement progress">
           <span className="status-value">
@@ -75,8 +109,7 @@ function Dashboard() {
           <p className="eyebrow">Step 2</p>
           <h2 id="boundaries-title">Review boundaries checklist</h2>
           <p>
-            Checklist progress now saves as a versioned local draft, ready to replace with API persistence when
-            server authentication and a database are connected.
+            Checklist progress now saves to the backend database for the signed-in account.
           </p>
         </div>
 
@@ -110,7 +143,7 @@ function Dashboard() {
           <h2 id="summary-title">Agreement summary</h2>
           <p>
             This draft has a stable schema version, status, partner invite status, accepted boundary IDs, and
-            timestamps so it can be migrated to server persistence without changing the dashboard workflow.
+            timestamps stored through the backend API.
           </p>
         </div>
       </section>
