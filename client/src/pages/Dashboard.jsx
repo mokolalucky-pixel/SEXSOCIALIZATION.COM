@@ -61,7 +61,7 @@ function Dashboard() {
           <h2 id="invite-title">Invite your partner</h2>
           <p>
             Start by confirming both partners want to define communication expectations, privacy rules,
-            and repair steps together. Backend-backed invites will be connected after real auth and a datastore
+            and repair steps together. Partner-backed invites can be connected when server authentication and a datastore
             are added.
           </p>
         </div>
@@ -76,7 +76,7 @@ function Dashboard() {
           <h2 id="boundaries-title">Review boundaries checklist</h2>
           <p>
             Checklist progress now saves as a versioned local draft, ready to replace with API persistence when
-            real authentication and a database are connected.
+            server authentication and a database are connected.
           </p>
         </div>
 
@@ -118,7 +118,7 @@ function Dashboard() {
       <section aria-labelledby="next-modules-title">
         <div className="section-heading">
           <p className="eyebrow">What stays pending</p>
-          <h2 id="next-modules-title">Next integrations after this scaffold</h2>
+          <h2 id="next-modules-title">Next integrations after this MVP</h2>
         </div>
         <ul className="feature-list">
           {nextModules.map((module) => (
