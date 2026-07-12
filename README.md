@@ -89,6 +89,7 @@ In the Vercel project settings → **Environment Variables**, add:
 | `VITE_ENVIRONMENT`    | `production`                       |
 | `VITE_AUTH_PROVIDER`  | `local-scaffold` (update when ready) |
 | `VITE_API_BASE_URL`   | *(your backend URL when you have one)* |
+| `VITE_AGREEMENT_STORAGE_MODE` | `local-draft` until a real backend/datastore is connected |
 
 ### 4. Add Your Domain
 In Vercel project settings → **Domains**, add `sexsocialization.com`.
