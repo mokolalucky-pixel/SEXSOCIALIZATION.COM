@@ -1,0 +1,263 @@
+:root {
+  --bg: #120019;
+  --bg-soft: #1d0729;
+  --card: #260a34;
+  --text: #f9f1ff;
+  --text-muted: #d5bedf;
+  --accent: #ff4fa3;
+  --accent-soft: #ff7cbc;
+  --focus: #ffc7e4;
+  --danger: #ffd2d2;
+
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #300a44, var(--bg) 55%);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+a {
+  color: var(--accent-soft);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  background: var(--focus);
+  color: #15001e;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.skip-link:focus {
+  left: 1rem;
+}
+
+.site-header,
+.site-footer,
+.main-content {
+  width: min(1080px, 100%);
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-logo {
+  width: 120px;
+  height: auto;
+}
+
+.brand-title {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.brand-subtitle {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.nav-list {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.nav-list a,
+.ghost-button {
+  display: inline-block;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  background: transparent;
+  color: var(--text);
+}
+
+.nav-list a.active {
+  border-color: var(--accent);
+  background: rgba(255, 79, 163, 0.16);
+}
+
+.ghost-button {
+  cursor: pointer;
+}
+
+.main-content {
+  padding-block: 1.5rem 2rem;
+}
+
+.panel {
+  max-width: 760px;
+  margin: 0 auto;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent), var(--card);
+  border-radius: 1rem;
+  padding: 1.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.panel h1 {
+  margin-top: 0;
+}
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.form-panel form {
+  display: grid;
+  gap: 0.5rem;
+  margin-block: 1rem;
+}
+
+.form-panel input {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  padding: 0.6rem;
+  font: inherit;
+  color: var(--text);
+  background: var(--bg-soft);
+}
+
+.button {
+  border: 0;
+  border-radius: 0.6rem;
+  padding: 0.62rem 1rem;
+  background: var(--accent);
+  color: #2a0019;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  width: fit-content;
+}
+
+.button.secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text);
+}
+
+.error-message {
+  margin: 0.25rem 0;
+  padding: 0.55rem;
+  border-radius: 0.5rem;
+  color: #2f0000;
+  background: var(--danger);
+  font-weight: 600;
+}
+
+.feature-list {
+  margin: 1rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.site-footer {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  padding-bottom: 2rem;
+}
+
+@media (max-width: 640px) {
+  .site-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .brand-logo {
+    width: 96px;
+  }
+
+  .panel {
+    padding: 1rem;
+  }
+}
+
+/* ────────────────────────────────────────────
+   Age Gate
+   ──────────────────────────────────────────── */
+.age-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top, #300a44, var(--bg) 65%);
+  padding: 1rem;
+}
+
+.age-gate-card {
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.25rem;
+  padding: 2rem;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+}
+
+.age-gate-logo {
+  width: 160px;
+  height: auto;
+  margin-bottom: 1.25rem;
+}
+
+.age-gate-card h1 {
+  margin: 0 0 0.75rem;
+  font-size: 1.75rem;
+}
+
+.age-gate-card p {
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.age-gate-sub {
+  font-size: 0.88rem;
+}
+
+.age-gate-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
