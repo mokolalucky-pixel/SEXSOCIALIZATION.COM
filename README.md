@@ -116,3 +116,4 @@ These features are scaffolded but not yet connected to a real backend:
 - [ ] Role-based admin moderation tools
 - [ ] Automated tests (Vitest + React Testing Library recommended)
 - [ ] Privacy Policy and Terms of Service pages (required for adult platforms)
+- [ ] Social preview image: add `client/public/social-preview.png` (1200×630 px PNG) for proper OG/Twitter card rendering

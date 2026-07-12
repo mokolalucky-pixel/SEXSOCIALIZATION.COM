@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { AuthContext } from './authToken.js'
+import { AuthContext } from './AuthContext.js'
 
 const STORAGE_KEY = 'sexsocialization.auth.user'
 
