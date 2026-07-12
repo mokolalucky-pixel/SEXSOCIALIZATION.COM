@@ -40,6 +40,20 @@ export async function ensureSchema() {
         draft JSONB NOT NULL,
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )`
+
+      await db`CREATE TABLE IF NOT EXISTS partner_invites (
+        id TEXT PRIMARY KEY,
+        owner_user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        partner_user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+        token_hash TEXT UNIQUE NOT NULL,
+        status TEXT NOT NULL DEFAULT 'pending',
+        expires_at TIMESTAMPTZ NOT NULL,
+        accepted_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`
+
+      await db`CREATE INDEX IF NOT EXISTS partner_invites_owner_user_id_idx
+        ON partner_invites (owner_user_id, created_at DESC)`
     })()
   }
 
