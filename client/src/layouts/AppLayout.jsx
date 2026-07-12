@@ -55,7 +55,7 @@ function AppLayout() {
             Signed in as <strong>{user?.displayName || user?.email}</strong>
           </p>
         ) : (
-          <p>Private relationship communication scaffold for consenting adults 18+.</p>
+          <p>Private relationship communication workspace for consenting adults 18+.</p>
         )}
       </footer>
     </>
