@@ -10,6 +10,7 @@ import {
   toggleAgreementItem,
 } from '../services/agreementService.js'
 import { useAuth } from '../hooks/useAuth.js'
+import { createPartnerInvite, loadLatestPartnerInvite } from '../services/inviteService.js'
 
 const nextModules = [
   'Secure messaging: connect private messages to authenticated users and a datastore.',
@@ -22,6 +23,10 @@ function Dashboard() {
   const [agreement, setAgreement] = useState(() => createAgreementDraft(user))
   const [statusMessage, setStatusMessage] = useState('Loading saved draft…')
   const [saveError, setSaveError] = useState('')
+  const [invite, setInvite] = useState(null)
+  const [inviteStatus, setInviteStatus] = useState('')
+  const [inviteError, setInviteError] = useState('')
+  const [isCreatingInvite, setIsCreatingInvite] = useState(false)
 
   useEffect(() => {
     let isMounted = true
@@ -47,9 +52,61 @@ function Dashboard() {
     }
   }, [user])
 
+
+  useEffect(() => {
+    let isMounted = true
+
+    loadLatestPartnerInvite()
+      .then((latestInvite) => {
+        if (isMounted) {
+          setInvite(latestInvite)
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setInvite(null)
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   const totalItems = countBoundaryItems()
   const completedCount = countAcceptedItems(agreement)
   const persistenceMode = getPersistenceMode()
+
+
+  async function handleCreateInvite() {
+    setIsCreatingInvite(true)
+    setInviteError('')
+    setInviteStatus('Creating invite…')
+
+    try {
+      const nextInvite = await createPartnerInvite()
+      setInvite(nextInvite)
+      setInviteStatus('Invite link ready. Copy it and send it to your partner.')
+    } catch (error) {
+      setInviteError(error.message)
+      setInviteStatus('')
+    } finally {
+      setIsCreatingInvite(false)
+    }
+  }
+
+  async function handleCopyInvite() {
+    if (!invite?.inviteUrl) {
+      return
+    }
+
+    try {
+      await navigator.clipboard.writeText(invite.inviteUrl)
+      setInviteStatus('Invite link copied.')
+    } catch {
+      setInviteStatus('Copy failed. Select and copy the invite link manually.')
+    }
+  }
 
   function handleToggleItem(sectionId, itemId) {
     const nextAgreement = toggleAgreementItem(agreement, sectionId, itemId)
@@ -94,14 +151,34 @@ function Dashboard() {
           <p className="eyebrow">Step 1</p>
           <h2 id="invite-title">Invite your partner</h2>
           <p>
-            Start by confirming both partners want to define communication expectations, privacy rules,
-            and repair steps together. Partner-backed invites can be connected when server authentication and a datastore
-            are added.
+            Create a private invite link for your partner. When they accept it while signed in,
+            the connection is saved to the backend database.
           </p>
+          {invite?.status ? (
+            <p className="save-status">
+              Invite status: <strong>{invite.status}</strong>
+              {invite.partnerEmail ? <> accepted by <strong>{invite.partnerEmail}</strong></> : null}
+            </p>
+          ) : null}
+          {invite?.inviteUrl ? (
+            <label className="invite-link-field" htmlFor="partner-invite-link">
+              Partner invite link
+              <input id="partner-invite-link" readOnly value={invite.inviteUrl} onFocus={(event) => event.target.select()} />
+            </label>
+          ) : null}
+          {inviteStatus ? <p className="save-status">{inviteStatus}</p> : null}
+          {inviteError ? <p className="error-message" role="alert">{inviteError}</p> : null}
         </div>
-        <button className="button" type="button" disabled>
-          Invite flow pending
-        </button>
+        <div className="invite-actions">
+          <button className="button" type="button" onClick={handleCreateInvite} disabled={isCreatingInvite}>
+            {isCreatingInvite ? 'Creating…' : invite?.inviteUrl ? 'Create new invite' : 'Create invite link'}
+          </button>
+          {invite?.inviteUrl ? (
+            <button className="button secondary" type="button" onClick={handleCopyInvite}>
+              Copy link
+            </button>
+          ) : null}
+        </div>
       </section>
 
       <section aria-labelledby="boundaries-title">

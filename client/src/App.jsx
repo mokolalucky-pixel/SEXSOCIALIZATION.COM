@@ -5,6 +5,7 @@ import Home from './pages/Home.jsx'
 import Login from './pages/Login.jsx'
 import SignUp from './pages/SignUp.jsx'
 import Dashboard from './pages/Dashboard.jsx'
+import AcceptInvite from './pages/AcceptInvite.jsx'
 import NotFound from './pages/NotFound.jsx'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
@@ -25,6 +26,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="invite/:token" element={<AcceptInvite />} />
           <Route path="home" element={<Navigate to="/" replace />} />
           <Route path="*" element={<NotFound />} />
         </Route>
