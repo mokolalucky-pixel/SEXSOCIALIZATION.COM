@@ -1,38 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { boundarySections, countBoundaryItems } from '../data/boundarySections.js'
+import {
+  countAcceptedItems,
+  getPersistenceMode,
+  isAgreementItemAccepted,
+  loadAgreementDraft,
+  saveAgreementDraft,
+  toggleAgreementItem,
+} from '../services/agreementService.js'
 import { useAuth } from '../hooks/useAuth.js'
-
-const initialBoundarySections = [
-  {
-    id: 'communication',
-    title: 'Communication rhythm',
-    description: 'Set expectations for replies, quiet hours, and check-ins before problems escalate.',
-    items: [
-      'Preferred daily check-in window is documented',
-      'Quiet hours and do-not-disturb times are agreed',
-      'Both partners know how to pause a difficult conversation',
-    ],
-  },
-  {
-    id: 'privacy',
-    title: 'Privacy and consent',
-    description: 'Capture what can be shared, stored, screenshotted, or revisited later.',
-    items: [
-      'Private content sharing rules are explicit',
-      'Screenshot and recording boundaries are explicit',
-      'Either partner can withdraw consent and request deletion',
-    ],
-  },
-  {
-    id: 'conflict',
-    title: 'Conflict repair plan',
-    description: 'Create a low-pressure path for cooling down, apologizing, and reconnecting.',
-    items: [
-      'Cooldown time limit is agreed',
-      'Repair conversation format is agreed',
-      'Escalation or safety support steps are documented',
-    ],
-  },
-]
 
 const nextModules = [
   'Secure messaging: connect private messages to authenticated users and a datastore.',
@@ -42,22 +18,21 @@ const nextModules = [
 
 function Dashboard() {
   const { user } = useAuth()
-  const [completedItems, setCompletedItems] = useState(() => new Set())
+  const [agreement, setAgreement] = useState(() => loadAgreementDraft(user))
 
-  const totalItems = initialBoundarySections.reduce((count, section) => count + section.items.length, 0)
-  const completedCount = completedItems.size
+  useEffect(() => {
+    setAgreement(loadAgreementDraft(user))
+  }, [user])
 
-  function toggleItem(item) {
-    setCompletedItems((currentItems) => {
-      const nextItems = new Set(currentItems)
+  const totalItems = countBoundaryItems()
+  const completedCount = countAcceptedItems(agreement)
+  const persistenceMode = getPersistenceMode()
 
-      if (nextItems.has(item)) {
-        nextItems.delete(item)
-      } else {
-        nextItems.add(item)
-      }
+  function handleToggleItem(sectionId, itemId) {
+    setAgreement((currentAgreement) => {
+      const nextAgreement = toggleAgreementItem(currentAgreement, sectionId, itemId)
 
-      return nextItems
+      return saveAgreementDraft(user, nextAgreement)
     })
   }
 
@@ -67,6 +42,10 @@ function Dashboard() {
         <div>
           <h1 id="dashboard-title">Partner agreement workspace</h1>
           <p>Welcome back, {user?.displayName || user?.email}.</p>
+          <p className="save-status">
+            Draft storage: <strong>{persistenceMode}</strong>. Last updated:{' '}
+            <strong>{new Date(agreement.updatedAt).toLocaleString()}</strong>
+          </p>
         </div>
         <div className="status-card" aria-label="Agreement progress">
           <span className="status-value">
@@ -96,25 +75,26 @@ function Dashboard() {
           <p className="eyebrow">Step 2</p>
           <h2 id="boundaries-title">Review boundaries checklist</h2>
           <p>
-            Use this scaffold to decide what the first real agreement workflow should save for each couple.
+            Checklist progress now saves as a versioned local draft, ready to replace with API persistence when
+            real authentication and a database are connected.
           </p>
         </div>
 
         <div className="boundary-grid">
-          {initialBoundarySections.map((section) => (
+          {boundarySections.map((section) => (
             <article className="boundary-card" key={section.id}>
               <h3>{section.title}</h3>
               <p>{section.description}</p>
               <ul className="checklist">
                 {section.items.map((item) => (
-                  <li key={item}>
+                  <li key={item.id}>
                     <label>
                       <input
                         type="checkbox"
-                        checked={completedItems.has(item)}
-                        onChange={() => toggleItem(item)}
+                        checked={isAgreementItemAccepted(agreement, section.id, item.id)}
+                        onChange={() => handleToggleItem(section.id, item.id)}
                       />
-                      <span>{item}</span>
+                      <span>{item.label}</span>
                     </label>
                   </li>
                 ))}
@@ -129,8 +109,8 @@ function Dashboard() {
           <p className="eyebrow">Step 3</p>
           <h2 id="summary-title">Agreement summary</h2>
           <p>
-            After backend integration, this area should generate a versioned agreement both partners can accept,
-            revisit, and update when boundaries change.
+            This draft has a stable schema version, status, partner invite status, accepted boundary IDs, and
+            timestamps so it can be migrated to server persistence without changing the dashboard workflow.
           </p>
         </div>
       </section>
