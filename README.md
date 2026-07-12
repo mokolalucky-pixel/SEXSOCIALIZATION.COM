@@ -1,67 +1,120 @@
 # SEXSOCIALIZATION.COM
 
-A privacy-conscious relationship communication app focused on long-distance connection.
+A privacy-conscious relationship communication app focused on long-distance connection for adults 18+.
 
 ## Current Baseline
 
-This repository now contains a deployable Vite + React frontend scaffold with:
+A deployable Vite + React frontend with:
 
-- Core routes and pages:
-  - `/` Home
-  - `/login` Login
-  - `/signup` Sign Up
-  - `/dashboard` Protected dashboard
-  - `*` Not Found fallback
-- Shared layout with navigation and footer
-- Authentication scaffold using local storage (placeholder for real backend auth)
-- Basic form validation and accessible error messaging
-- Responsive base styles and keyboard focus states
-- Environment template: `client/.env.example`
-- Vercel deployment configuration and security headers: `vercel.json`
+- 18+ age verification gate (session-scoped)
+- Core routes: Home, Login, Sign Up, Dashboard (protected), 404
+- Shared layout with navigation and accessible skip link
+- Authentication scaffold using local storage (ready for real backend)
+- Form validation with accessible error messaging
+- Responsive styling with dark mode and focus management
+- SEO and Open Graph meta tags
+- Security headers: CSP, HSTS, X-Frame-Options, Referrer-Policy
+- GitHub Actions CI build on every push/PR
+- Vercel deployment configuration
 
 ## Project Structure
 
-- `client/src/main.jsx` – app entrypoint with router + auth provider
-- `client/src/App.jsx` – route definitions
-- `client/src/layouts/AppLayout.jsx` – shared app layout
-- `client/src/components/ProtectedRoute.jsx` – route guard scaffold
-- `client/src/context/AuthContext.jsx` – auth state abstraction (scaffold)
-- `client/src/pages/` – page-level views
-- `client/src/styles.css` – responsive base styling
+```
+client/
+  public/
+    logo.svg       – brand logo
+    favicon.svg    – browser favicon
+    robots.txt     – search engine directives
+  src/
+    main.jsx       – app entrypoint (AgeGate + BrowserRouter + AuthProvider)
+    App.jsx        – route definitions
+    styles.css     – global responsive styles
+    context/
+      AuthContext.jsx    – auth state and provider
+    hooks/
+      useAuth.js         – useAuth hook
+    layouts/
+      AppLayout.jsx      – site-wide header, footer, nav
+    components/
+      AgeGate.jsx        – 18+ entry confirmation
+      ProtectedRoute.jsx – route guard
+    pages/
+      Home.jsx
+      Login.jsx
+      SignUp.jsx
+      Dashboard.jsx
+      NotFound.jsx
+.github/workflows/
+  ci.yml          – lint + build on push/PR
+vercel.json       – Vercel deploy config and security headers
+```
 
 ## Local Development
 
-From `client/`:
-
 ```bash
+cd client
 npm install
 npm run dev
 ```
 
-## Build and Preview
-
-From `client/`:
+## Build
 
 ```bash
+cd client
 npm run build
 npm run preview
 ```
 
 ## Environment Variables
 
-Copy `client/.env.example` to `client/.env` and set values as needed.
+Copy `client/.env.example` to `client/.env` and fill in values.
 
-## Deployment
+## Deploying to Vercel (Go Live)
 
-`vercel.json` is configured for SPA routing and baseline security headers.
+### 1. Push to GitHub
+Merge your changes to `main`. The CI workflow will run automatically.
 
-## Remaining Production Work
+### 2. Import to Vercel
+1. Go to [vercel.com/new](https://vercel.com/new) and sign in.
+2. Click **"Import Git Repository"** and select `mokolalucky-pixel/SEXSOCIALIZATION.COM`.
+3. Vercel will detect `vercel.json` automatically — leave build settings as-is.
+4. Click **Deploy**.
 
-To fully finalize product functionality, complete:
+### 3. Configure Environment Variables
+In the Vercel project settings → **Environment Variables**, add:
 
-- Real authentication provider integration
-- Persistent datastore integration
-- End-to-end encrypted messaging
-- Video calling (WebRTC service/provider)
-- Role-based moderation/admin tooling
-- Automated tests and CI quality gates
+| Name                  | Value                              |
+| --------------------- | ---------------------------------- |
+| `VITE_APP_NAME`       | `SEXSOCIALIZATION.COM`             |
+| `VITE_ENVIRONMENT`    | `production`                       |
+| `VITE_AUTH_PROVIDER`  | `local-scaffold` (update when ready) |
+| `VITE_API_BASE_URL`   | *(your backend URL when you have one)* |
+
+### 4. Add Your Domain
+In Vercel project settings → **Domains**, add `sexsocialization.com`.
+Then update your DNS provider (wherever you registered the domain):
+
+| Type  | Name | Value                  |
+| ----- | ---- | ---------------------- |
+| A     | @    | `76.76.21.21`          |
+| CNAME | www  | `cns.vercel-dns.com`   |
+
+Vercel will auto-provision an HTTPS/TLS certificate via Let's Encrypt.
+
+### 5. Verify
+- Visit `https://sexsocialization.com`
+- Age gate should appear
+- All routes should work
+- Check `https://securityheaders.com/?q=sexsocialization.com` — target A rating
+
+## Remaining Product Work
+
+These features are scaffolded but not yet connected to a real backend:
+
+- [ ] Real authentication provider (Firebase Auth, Supabase, Auth0, etc.)
+- [ ] Persistent datastore (Firestore, Supabase, PlanetScale, etc.)
+- [ ] End-to-end encrypted messaging
+- [ ] Video calling (WebRTC service: LiveKit, Daily.co, Twilio, etc.)
+- [ ] Role-based admin moderation tools
+- [ ] Automated tests (Vitest + React Testing Library recommended)
+- [ ] Privacy Policy and Terms of Service pages (required for adult platforms)

@@ -210,3 +210,54 @@ input:focus-visible {
     padding: 1rem;
   }
 }
+
+/* ────────────────────────────────────────────
+   Age Gate
+   ──────────────────────────────────────────── */
+.age-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top, #300a44, var(--bg) 65%);
+  padding: 1rem;
+}
+
+.age-gate-card {
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.25rem;
+  padding: 2rem;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+}
+
+.age-gate-logo {
+  width: 160px;
+  height: auto;
+  margin-bottom: 1.25rem;
+}
+
+.age-gate-card h1 {
+  margin: 0 0 0.75rem;
+  font-size: 1.75rem;
+}
+
+.age-gate-card p {
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.age-gate-sub {
+  font-size: 0.88rem;
+}
+
+.age-gate-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
