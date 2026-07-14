@@ -24,6 +24,7 @@ export function publicUser(user) {
     email: user.email,
     displayName: user.display_name,
     gender: user.gender || null,
+    region: user.region || null,
     isAdmin: isAdminEmail(user.email),
   }
 }
@@ -141,12 +142,13 @@ export async function requireUser(req) {
   return user
 }
 
-export function createUserRecord({ email, displayName, password, gender }) {
+export function createUserRecord({ email, displayName, password, gender, region }) {
   return {
     id: randomUUID(),
     email,
     displayName,
     gender: gender || null,
+    region: region || null,
     passwordHash: hashPassword(password),
   }
 }

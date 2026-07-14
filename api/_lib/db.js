@@ -26,6 +26,7 @@ export async function ensureSchema() {
         display_name TEXT NOT NULL,
         password_hash TEXT NOT NULL,
         gender TEXT,
+        region TEXT,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )`
 

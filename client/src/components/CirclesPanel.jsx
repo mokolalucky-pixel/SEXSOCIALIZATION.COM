@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
 import { joinCircle, leaveCircle, loadCircleMembers, loadCircles } from '../services/circleService.js'
+import { useAuth } from '../hooks/useAuth.js'
 
 function CirclesPanel() {
+  const { user } = useAuth()
   const [circles, setCircles] = useState([])
   const [userGender, setUserGender] = useState(null)
   const [selectedType, setSelectedType] = useState('')
   const [members, setMembers] = useState([])
+  const [regionFilter, setRegionFilter] = useState('')
   const [status, setStatus] = useState('Loading circles…')
   const [error, setError] = useState('')
 
@@ -43,7 +46,7 @@ function CirclesPanel() {
       }
     }
 
-    loadCircleMembers(selectedType)
+    loadCircleMembers(selectedType, regionFilter)
       .then((loadedMembers) => {
         if (isMounted) {
           setMembers(loadedMembers)
@@ -58,7 +61,7 @@ function CirclesPanel() {
     return () => {
       isMounted = false
     }
-  }, [selectedType, circles])
+  }, [selectedType, circles, regionFilter])
 
   async function handleJoin(circleType) {
     setError('')
@@ -103,8 +106,9 @@ function CirclesPanel() {
       <div>
         <p className="eyebrow">My Circles</p>
         <h2 id="circles-title">Community circles</h2>
-        <p>Join circles based on your gender identity. Gender-restricted circles enforce membership rules.</p>
+        <p>Join circles based on your gender identity. Filter members by region to connect with local people.</p>
         {userGender ? <p className="save-status">Your gender: <strong>{userGender}</strong></p> : null}
+        {user?.region ? <p className="save-status">Your region: <strong>{user.region}</strong></p> : null}
         {status ? <p className="save-status">{status}</p> : null}
         {error ? <p className="error-message" role="alert">{error}</p> : null}
       </div>
@@ -149,16 +153,29 @@ function CirclesPanel() {
                 ) : null}
               </div>
 
-              {selectedCircle.joined && members.length ? (
-                <div className="contact-list">
-                  <h4>Members</h4>
-                  {members.map((member) => (
-                    <article className="report-card" key={member.id}>
-                      <p><strong>{member.displayName}</strong>{member.isYou ? ' (you)' : ''}</p>
-                      {member.gender ? <p>{member.gender}</p> : null}
-                    </article>
-                  ))}
-                </div>
+              {selectedCircle.joined ? (
+                <>
+                  <label className="invite-link-field" htmlFor="region-filter">
+                    Filter members by region
+                    <input
+                      id="region-filter"
+                      value={regionFilter}
+                      onChange={(event) => setRegionFilter(event.target.value)}
+                      placeholder="e.g. Nairobi, London, New York"
+                    />
+                  </label>
+
+                  <div className="contact-list">
+                    <h4>Members{regionFilter ? ` in "${regionFilter}"` : ''} ({members.length})</h4>
+                    {members.length ? members.map((member) => (
+                      <article className="report-card" key={member.id}>
+                        <p><strong>{member.displayName}</strong>{member.isYou ? ' (you)' : ''}</p>
+                        {member.gender ? <p>Gender: {member.gender}</p> : null}
+                        {member.region ? <p>Region: {member.region}</p> : null}
+                      </article>
+                    )) : <p className="save-status">{regionFilter ? 'No members in this region.' : 'No members yet.'}</p>}
+                  </div>
+                </>
               ) : null}
             </>
           ) : <p className="save-status">Select a circle to view details.</p>}

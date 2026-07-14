@@ -11,6 +11,7 @@ function SignUp() {
     name: '',
     email: '',
     gender: '',
+    region: '',
     password: '',
     confirmPassword: '',
   })
@@ -44,7 +45,7 @@ function SignUp() {
     setIsSubmitting(true)
 
     try {
-      await signup({ email: formState.email, name: formState.name, password: formState.password, gender: formState.gender })
+      await signup({ email: formState.email, name: formState.name, password: formState.password, gender: formState.gender, region: formState.region })
       navigate('/dashboard', { replace: true })
     } catch (error) {
       setError(error.message)
@@ -92,6 +93,16 @@ function SignUp() {
           <option value="non-binary">Non-binary</option>
           <option value="prefer-not-to-say">Prefer not to say</option>
         </select>
+
+        <label htmlFor="signup-region">Region / City</label>
+        <input
+          id="signup-region"
+          name="region"
+          autoComplete="address-level1"
+          value={formState.region}
+          onChange={(event) => setFormState((prev) => ({ ...prev, region: event.target.value }))}
+          placeholder="e.g. New York, London, Nairobi"
+        />
 
         <label htmlFor="signup-password">Password</label>
         <input
