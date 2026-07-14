@@ -412,3 +412,58 @@ input:focus-visible {
   color: var(--text);
   padding: 0.75rem;
 }
+
+.stacked-card {
+  display: grid;
+}
+
+.inline-form {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.inline-form textarea,
+.report-card select {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.55rem;
+  background: var(--bg-soft);
+  color: var(--text);
+  font: inherit;
+  padding: 0.75rem;
+}
+
+.inline-form textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
+
+.message-list,
+.admin-report-list {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.message-bubble,
+.report-card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.75rem;
+  padding: 0.8rem;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.message-bubble.mine {
+  border-color: rgba(255, 79, 163, 0.55);
+  background: rgba(255, 79, 163, 0.12);
+}
+
+.message-bubble p,
+.report-card p {
+  margin: 0 0 0.45rem;
+}
+
+.message-bubble small {
+  color: var(--text-muted);
+}

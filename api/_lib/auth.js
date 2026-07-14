@@ -1,5 +1,6 @@
 import { randomBytes, randomUUID, pbkdf2Sync, timingSafeEqual, createHmac } from 'node:crypto'
 import { ensureSchema, getSql } from './db.js'
+import { isAdminEmail } from './admin.js'
 
 const SESSION_COOKIE = 'sexsocialization_session'
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 14
@@ -22,6 +23,7 @@ export function publicUser(user) {
     id: user.id,
     email: user.email,
     displayName: user.display_name,
+    isAdmin: isAdminEmail(user.email),
   }
 }
 
