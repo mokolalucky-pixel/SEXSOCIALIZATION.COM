@@ -5,8 +5,9 @@ import { useAuth } from '../hooks/useAuth.js'
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function SignUp() {
-  const { signup } = useAuth()
+  const { signup, verify, resendCode } = useAuth()
   const navigate = useNavigate()
+  const [step, setStep] = useState('register')
   const [formState, setFormState] = useState({
     name: '',
     email: '',
@@ -15,10 +16,16 @@ function SignUp() {
     password: '',
     confirmPassword: '',
   })
+  const [verificationState, setVerificationState] = useState({
+    userId: '',
+    code: '',
+    email: '',
+    message: '',
+  })
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  async function handleSubmit(event) {
+  async function handleRegister(event) {
     event.preventDefault()
     setError('')
 
@@ -45,7 +52,41 @@ function SignUp() {
     setIsSubmitting(true)
 
     try {
-      await signup({ email: formState.email, name: formState.name, password: formState.password, gender: formState.gender, region: formState.region })
+      const result = await signup({
+        email: formState.email,
+        name: formState.name,
+        password: formState.password,
+        gender: formState.gender,
+        region: formState.region,
+      })
+
+      setVerificationState({
+        userId: result.userId,
+        code: '',
+        email: result.email,
+        message: result.message,
+      })
+      setStep('verify')
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  async function handleVerify(event) {
+    event.preventDefault()
+    setError('')
+
+    if (verificationState.code.trim().length !== 6) {
+      setError('Enter the 6-digit verification code.')
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      await verify({ userId: verificationState.userId, code: verificationState.code })
       navigate('/dashboard', { replace: true })
     } catch (error) {
       setError(error.message)
@@ -54,11 +95,67 @@ function SignUp() {
     }
   }
 
+  async function handleResend() {
+    setError('')
+    setIsSubmitting(true)
+
+    try {
+      const result = await resendCode({ userId: verificationState.userId })
+      setVerificationState((prev) => ({ ...prev, message: result.message, code: '' }))
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  if (step === 'verify') {
+    return (
+      <section className="panel form-panel" aria-labelledby="verify-title">
+        <h1 id="verify-title">Verify your account</h1>
+        <p>A 6-digit verification code was sent to <strong>{verificationState.email}</strong>.</p>
+        {verificationState.message ? <p className="save-status">{verificationState.message}</p> : null}
+
+        <form noValidate onSubmit={handleVerify}>
+          <label htmlFor="verify-code">Verification code</label>
+          <input
+            id="verify-code"
+            name="code"
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={6}
+            value={verificationState.code}
+            onChange={(event) => setVerificationState((prev) => ({ ...prev, code: event.target.value.replace(/\D/g, '').slice(0, 6) }))}
+            placeholder="000000"
+            required
+          />
+
+          {error ? <p className="error-message" role="alert">{error}</p> : null}
+
+          <button className="button" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Verifying…' : 'Verify and continue'}
+          </button>
+        </form>
+
+        <div className="action-row">
+          <button className="button secondary" type="button" onClick={handleResend} disabled={isSubmitting}>
+            Resend code
+          </button>
+        </div>
+
+        <p>
+          Already have an account? <Link to="/login">Log in</Link>
+        </p>
+      </section>
+    )
+  }
+
   return (
     <section className="panel form-panel" aria-labelledby="signup-title">
       <h1 id="signup-title">Create account</h1>
       <p>Start your private long-distance connection space.</p>
-      <form noValidate onSubmit={handleSubmit}>
+      <form noValidate onSubmit={handleRegister}>
         <label htmlFor="signup-name">Display name</label>
         <input
           id="signup-name"

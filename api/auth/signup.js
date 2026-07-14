@@ -1,5 +1,7 @@
-import { createSession, createUserRecord, emailPattern, normalizeEmail, publicUser } from '../_lib/auth.js'
+import { createUserRecord, emailPattern, normalizeEmail, publicUser } from '../_lib/auth.js'
 import { ensureSchema, getSql } from '../_lib/db.js'
+import { sendVerificationEmail } from '../_lib/email.js'
+import { createVerificationRecord } from '../_lib/verification.js'
 import { readJson, requireMethod, sendError, sendJson } from '../_lib/http.js'
 
 export default async function handler(req, res) {
@@ -25,15 +27,14 @@ export default async function handler(req, res) {
 
     const allowedGenders = new Set(['female', 'male', 'non-binary', 'prefer-not-to-say'])
     const gender = allowedGenders.has(String(rawGender || '').toLowerCase()) ? String(rawGender).toLowerCase() : null
-
     const region = String(rawRegion || '').trim().slice(0, 100) || null
 
     const userRecord = createUserRecord({ email, displayName, password, gender, region })
 
     try {
       await getSql()`
-        INSERT INTO users (id, email, display_name, password_hash, gender, region)
-        VALUES (${userRecord.id}, ${userRecord.email}, ${userRecord.displayName}, ${userRecord.passwordHash}, ${userRecord.gender}, ${userRecord.region})
+        INSERT INTO users (id, email, display_name, password_hash, gender, region, verified)
+        VALUES (${userRecord.id}, ${userRecord.email}, ${userRecord.displayName}, ${userRecord.passwordHash}, ${userRecord.gender}, ${userRecord.region}, FALSE)
       `
     } catch (error) {
       if (error.message?.includes('duplicate key') || error.code === '23505') {
@@ -43,16 +44,18 @@ export default async function handler(req, res) {
       throw error
     }
 
-    const user = {
-      id: userRecord.id,
-      email: userRecord.email,
-      display_name: userRecord.displayName,
-      gender: userRecord.gender,
-      region: userRecord.region,
-    }
+    const code = await createVerificationRecord(userRecord.id)
+    const emailResult = await sendVerificationEmail(email, code)
 
-    await createSession(req, res, user.id)
-    sendJson(res, 201, { user: publicUser(user) })
+    sendJson(res, 201, {
+      requiresVerification: true,
+      userId: userRecord.id,
+      email,
+      emailSent: emailResult.sent,
+      message: emailResult.sent
+        ? 'A verification code has been sent to your email address.'
+        : 'Account created. ' + (emailResult.reason || 'Check your email for the verification code.'),
+    })
   } catch (error) {
     sendError(res, error)
   }
