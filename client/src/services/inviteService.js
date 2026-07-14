@@ -1,7 +1,10 @@
 import { apiRequest } from './apiClient.js'
 
-export async function createPartnerInvite() {
-  const { invite } = await apiRequest('/api/invites/create', { method: 'POST' })
+export async function createPartnerInvite(recipientContact = '') {
+  const { invite } = await apiRequest('/api/invites/create', {
+    method: 'POST',
+    body: JSON.stringify({ recipientContact }),
+  })
   return invite
 }
 

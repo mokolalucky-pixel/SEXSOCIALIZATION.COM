@@ -10,6 +10,8 @@ export default async function handler(req, res) {
     const [invite] = await getSql()`
       SELECT partner_invites.id,
         partner_invites.status,
+        partner_invites.recipient_contact,
+        partner_invites.delivery_method,
         partner_invites.expires_at,
         partner_invites.accepted_at,
         partner_invites.created_at,

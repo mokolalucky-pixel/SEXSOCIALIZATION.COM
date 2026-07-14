@@ -10,14 +10,31 @@ export function hashInviteToken(token) {
   return createHash('sha256').update(token).digest('base64url')
 }
 
-export function createInviteRecord(ownerUserId) {
+export function normalizeRecipientContact(contact) {
+  return String(contact || '').trim().slice(0, 255)
+}
+
+export function deliveryMethodForContact(contact) {
+  const normalizedContact = normalizeRecipientContact(contact)
+
+  if (!normalizedContact) {
+    return 'copy'
+  }
+
+  return normalizedContact.includes('@') ? 'email' : 'sms'
+}
+
+export function createInviteRecord(ownerUserId, recipientContact = '') {
   const token = createInviteToken()
+  const normalizedContact = normalizeRecipientContact(recipientContact)
 
   return {
     id: randomUUID(),
     ownerUserId,
     token,
     tokenHash: hashInviteToken(token),
+    recipientContact: normalizedContact || null,
+    deliveryMethod: deliveryMethodForContact(normalizedContact),
     expiresAt: new Date(Date.now() + INVITE_TTL_MS).toISOString(),
   }
 }
@@ -30,6 +47,8 @@ export function publicInvite(invite, origin) {
     id: invite.id,
     status: invite.status,
     inviteUrl,
+    recipientContact: invite.recipient_contact,
+    deliveryMethod: invite.delivery_method,
     ownerEmail: invite.owner_email,
     partnerEmail: invite.partner_email,
     expiresAt: invite.expires_at,

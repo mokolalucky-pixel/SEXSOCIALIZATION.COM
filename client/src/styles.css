@@ -467,3 +467,7 @@ input:focus-visible {
 .message-bubble small {
   color: var(--text-muted);
 }
+
+.invite-link-field input::placeholder {
+  color: rgba(213, 190, 223, 0.72);
+}
