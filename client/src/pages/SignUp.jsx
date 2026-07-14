@@ -10,6 +10,7 @@ function SignUp() {
   const [formState, setFormState] = useState({
     name: '',
     email: '',
+    gender: '',
     password: '',
     confirmPassword: '',
   })
@@ -43,7 +44,7 @@ function SignUp() {
     setIsSubmitting(true)
 
     try {
-      await signup({ email: formState.email, name: formState.name, password: formState.password })
+      await signup({ email: formState.email, name: formState.name, password: formState.password, gender: formState.gender })
       navigate('/dashboard', { replace: true })
     } catch (error) {
       setError(error.message)
@@ -77,6 +78,20 @@ function SignUp() {
           onChange={(event) => setFormState((prev) => ({ ...prev, email: event.target.value }))}
           required
         />
+
+        <label htmlFor="signup-gender">Gender</label>
+        <select
+          id="signup-gender"
+          name="gender"
+          value={formState.gender}
+          onChange={(event) => setFormState((prev) => ({ ...prev, gender: event.target.value }))}
+        >
+          <option value="">Select gender (optional)</option>
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+          <option value="non-binary">Non-binary</option>
+          <option value="prefer-not-to-say">Prefer not to say</option>
+        </select>
 
         <label htmlFor="signup-password">Password</label>
         <input
