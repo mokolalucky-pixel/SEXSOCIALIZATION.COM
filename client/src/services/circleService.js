@@ -18,7 +18,11 @@ export async function leaveCircle(circleType) {
   })
 }
 
-export async function loadCircleMembers(circleType) {
-  const { members } = await apiRequest(`/api/circles/members?circleType=${encodeURIComponent(circleType)}`)
+export async function loadCircleMembers(circleType, region = '') {
+  const params = new URLSearchParams({ circleType })
+  if (region) {
+    params.set('region', region)
+  }
+  const { members } = await apiRequest(`/api/circles/members?${params}`)
   return members
 }

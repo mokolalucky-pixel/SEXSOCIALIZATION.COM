@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     requireMethod(req, ['POST'])
     await ensureSchema()
 
-    const { email: rawEmail, name, password, gender: rawGender } = await readJson(req)
+    const { email: rawEmail, name, password, gender: rawGender, region: rawRegion } = await readJson(req)
     const email = normalizeEmail(rawEmail)
     const displayName = String(name || '').trim()
 
@@ -26,7 +26,9 @@ export default async function handler(req, res) {
     const allowedGenders = new Set(['female', 'male', 'non-binary', 'prefer-not-to-say'])
     const gender = allowedGenders.has(String(rawGender || '').toLowerCase()) ? String(rawGender).toLowerCase() : null
 
-    const userRecord = createUserRecord({ email, displayName, password, gender })
+    const region = String(rawRegion || '').trim().slice(0, 100) || null
+
+    const userRecord = createUserRecord({ email, displayName, password, gender, region })
 
     try {
       await getSql()`
@@ -46,6 +48,7 @@ export default async function handler(req, res) {
       email: userRecord.email,
       display_name: userRecord.displayName,
       gender: userRecord.gender,
+      region: userRecord.region,
     }
 
     await createSession(req, res, user.id)
