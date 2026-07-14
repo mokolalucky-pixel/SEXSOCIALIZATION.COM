@@ -88,6 +88,8 @@ In the Vercel project settings → **Environment Variables**, add:
 | ---- | ----- |
 | `DATABASE_URL` | Neon Postgres connection string |
 | `SESSION_SECRET` | Long random string used to sign session tokens |
+| `ADMIN_EMAILS` | Comma-separated admin account emails for moderation review |
+| `VIDEO_PROVIDER_JOIN_URL` | Optional WebRTC provider join URL used when call rooms become live |
 | `VITE_APP_NAME` | `SEXSOCIALIZATION.COM` |
 | `VITE_ENVIRONMENT` | `production` |
 | `VITE_AUTH_PROVIDER` | `backend-api` |
@@ -114,10 +116,12 @@ Vercel will auto-provision an HTTPS/TLS certificate via Let's Encrypt.
 
 The app now has backend auth and database-backed agreement drafts. Remaining product work:
 
-- [ ] Partner invitation flow backed by the database
-- [ ] End-to-end encrypted messaging
-- [ ] Video calling (WebRTC service: LiveKit, Daily.co, Twilio, etc.)
-- [ ] Role-based admin moderation tools
+- [x] Partner invitation flow backed by the database
+- [x] Authenticated partner messaging backed by the database
+- [x] Call-room foundation for a WebRTC provider
+- [x] Admin moderation report queue
+- [ ] End-to-end encryption for message payloads
+- [ ] Live video provider integration (LiveKit, Daily.co, Twilio, etc.)
 - [ ] Automated tests (Vitest + React Testing Library recommended)
 - [ ] Privacy Policy and Terms of Service pages (required for adult platforms)
 - [x] Social preview asset for OG/Twitter card rendering

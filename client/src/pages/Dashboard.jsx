@@ -11,12 +11,9 @@ import {
 } from '../services/agreementService.js'
 import { useAuth } from '../hooks/useAuth.js'
 import { createPartnerInvite, loadLatestPartnerInvite } from '../services/inviteService.js'
-
-const nextModules = [
-  'Secure messaging: connect private messages to authenticated users and a datastore.',
-  'Video calls: add a WebRTC provider and update camera/microphone security policy.',
-  'Admin moderation: add admin roles, report queue, and account safety actions.',
-]
+import MessagingPanel from '../components/MessagingPanel.jsx'
+import CallPanel from '../components/CallPanel.jsx'
+import ModerationPanel from '../components/ModerationPanel.jsx'
 
 function Dashboard() {
   const { user } = useAuth()
@@ -225,17 +222,9 @@ function Dashboard() {
         </div>
       </section>
 
-      <section aria-labelledby="next-modules-title">
-        <div className="section-heading">
-          <p className="eyebrow">What stays pending</p>
-          <h2 id="next-modules-title">Next integrations after this MVP</h2>
-        </div>
-        <ul className="feature-list">
-          {nextModules.map((module) => (
-            <li key={module}>{module}</li>
-          ))}
-        </ul>
-      </section>
+      <MessagingPanel />
+      <CallPanel />
+      <ModerationPanel isAdmin={user?.isAdmin} />
     </section>
   )
 }
