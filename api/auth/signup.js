@@ -32,8 +32,8 @@ export default async function handler(req, res) {
 
     try {
       await getSql()`
-        INSERT INTO users (id, email, display_name, password_hash)
-        VALUES (${userRecord.id}, ${userRecord.email}, ${userRecord.displayName}, ${userRecord.passwordHash})
+        INSERT INTO users (id, email, display_name, password_hash, gender, region)
+        VALUES (${userRecord.id}, ${userRecord.email}, ${userRecord.displayName}, ${userRecord.passwordHash}, ${userRecord.gender}, ${userRecord.region})
       `
     } catch (error) {
       if (error.message?.includes('duplicate key') || error.code === '23505') {

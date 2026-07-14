@@ -30,7 +30,9 @@ export async function ensureSchema() {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )`
 
-      await db\`ALTER TABLE users ADD COLUMN IF NOT EXISTS gender TEXT\`
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS gender TEXT`
+
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS region TEXT`
 
       await db`CREATE TABLE IF NOT EXISTS sessions (
         id_hash TEXT PRIMARY KEY,

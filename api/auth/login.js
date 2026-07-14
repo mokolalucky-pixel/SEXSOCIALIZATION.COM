@@ -10,8 +10,12 @@ export default async function handler(req, res) {
     const { email: rawEmail, password } = await readJson(req)
     const email = normalizeEmail(rawEmail)
 
-    if (!emailPattern.test(email) || String(password || '').length < 8) {
-      throw Object.assign(new Error('Invalid email or password.'), { statusCode: 401 })
+    if (!emailPattern.test(email)) {
+      throw Object.assign(new Error('Enter a valid email address.'), { statusCode: 400 })
+    }
+
+    if (String(password || '').length < 8) {
+      throw Object.assign(new Error('Password must contain at least 8 characters.'), { statusCode: 400 })
     }
 
     const [user] = await getSql()`
@@ -21,8 +25,12 @@ export default async function handler(req, res) {
       LIMIT 1
     `
 
-    if (!user || !verifyPassword(password, user.password_hash)) {
-      throw Object.assign(new Error('Invalid email or password.'), { statusCode: 401 })
+    if (!user) {
+      throw Object.assign(new Error('No account found for this email address. Sign up first.'), { statusCode: 401 })
+    }
+
+    if (!verifyPassword(password, user.password_hash)) {
+      throw Object.assign(new Error('Incorrect password. Please try again.'), { statusCode: 401 })
     }
 
     await createSession(req, res, user.id)
