@@ -27,12 +27,15 @@ export async function ensureSchema() {
         password_hash TEXT NOT NULL,
         gender TEXT,
         region TEXT,
+        avatar_url TEXT,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )`
 
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS gender TEXT`
 
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS region TEXT`
+
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT`
 
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS verified BOOLEAN NOT NULL DEFAULT FALSE`
 

@@ -63,6 +63,9 @@ export function AuthProvider({ children }) {
         setUser(nextUser)
         return nextUser
       },
+      updateUser: (updatedUser) => {
+        setUser(updatedUser)
+      },
       resendCode: async ({ userId }) => {
         const result = await apiRequest('/api/auth/resend-code', {
           method: 'POST',
