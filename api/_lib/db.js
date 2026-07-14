@@ -34,6 +34,21 @@ export async function ensureSchema() {
 
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS region TEXT`
 
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS verified BOOLEAN NOT NULL DEFAULT FALSE`
+
+      await db`CREATE TABLE IF NOT EXISTS verification_codes (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        code_hash TEXT NOT NULL,
+        attempts INT NOT NULL DEFAULT 0,
+        expires_at TIMESTAMPTZ NOT NULL,
+        used_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`
+
+      await db`CREATE INDEX IF NOT EXISTS verification_codes_user_id_idx
+        ON verification_codes (user_id, created_at DESC)`
+
       await db`CREATE TABLE IF NOT EXISTS sessions (
         id_hash TEXT PRIMARY KEY,
         user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,

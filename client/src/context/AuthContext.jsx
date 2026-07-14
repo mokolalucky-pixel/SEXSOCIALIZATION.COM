@@ -49,12 +49,26 @@ export function AuthProvider({ children }) {
         setUser(null)
       },
       signup: async ({ email, name, password, gender, region }) => {
-        const { user: nextUser } = await apiRequest('/api/auth/signup', {
+        const result = await apiRequest('/api/auth/signup', {
           method: 'POST',
           body: JSON.stringify({ email, name, password, gender, region }),
         })
+        return result
+      },
+      verify: async ({ userId, code }) => {
+        const { user: nextUser } = await apiRequest('/api/auth/verify', {
+          method: 'POST',
+          body: JSON.stringify({ userId, code }),
+        })
         setUser(nextUser)
         return nextUser
+      },
+      resendCode: async ({ userId }) => {
+        const result = await apiRequest('/api/auth/resend-code', {
+          method: 'POST',
+          body: JSON.stringify({ userId }),
+        })
+        return result
       },
     }),
     [isLoading, user],
