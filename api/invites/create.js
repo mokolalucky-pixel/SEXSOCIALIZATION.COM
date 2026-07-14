@@ -1,7 +1,7 @@
 import { createInviteRecord, publicInvite } from '../_lib/invites.js'
 import { requireUser } from '../_lib/auth.js'
 import { getSql } from '../_lib/db.js'
-import { requireMethod, sendError, sendJson } from '../_lib/http.js'
+import { readJson, requireMethod, sendError, sendJson } from '../_lib/http.js'
 
 function requestOrigin(req) {
   const protocol = req.headers['x-forwarded-proto'] || 'https'
@@ -12,17 +12,18 @@ export default async function handler(req, res) {
   try {
     requireMethod(req, ['POST'])
     const user = await requireUser(req)
+    const { recipientContact = '' } = await readJson(req)
     const db = getSql()
-    const invite = createInviteRecord(user.id)
+    const invite = createInviteRecord(user.id, recipientContact)
 
     await db`UPDATE partner_invites
       SET status = 'revoked'
       WHERE owner_user_id = ${user.id} AND status = 'pending'`
 
     const [row] = await db`
-      INSERT INTO partner_invites (id, owner_user_id, token_hash, expires_at)
-      VALUES (${invite.id}, ${invite.ownerUserId}, ${invite.tokenHash}, ${invite.expiresAt})
-      RETURNING id, status, expires_at, accepted_at, created_at
+      INSERT INTO partner_invites (id, owner_user_id, token_hash, recipient_contact, delivery_method, expires_at)
+      VALUES (${invite.id}, ${invite.ownerUserId}, ${invite.tokenHash}, ${invite.recipientContact}, ${invite.deliveryMethod}, ${invite.expiresAt})
+      RETURNING id, recipient_contact, delivery_method, status, expires_at, accepted_at, created_at
     `
 
     sendJson(res, 201, {

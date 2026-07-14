@@ -46,11 +46,19 @@ export async function ensureSchema() {
         owner_user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         partner_user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
         token_hash TEXT UNIQUE NOT NULL,
+        recipient_contact TEXT,
+        delivery_method TEXT NOT NULL DEFAULT 'copy',
         status TEXT NOT NULL DEFAULT 'pending',
         expires_at TIMESTAMPTZ NOT NULL,
         accepted_at TIMESTAMPTZ,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )`
+
+      await db`ALTER TABLE partner_invites
+        ADD COLUMN IF NOT EXISTS recipient_contact TEXT`
+
+      await db`ALTER TABLE partner_invites
+        ADD COLUMN IF NOT EXISTS delivery_method TEXT NOT NULL DEFAULT 'copy'`
 
       await db`CREATE INDEX IF NOT EXISTS partner_invites_owner_user_id_idx
         ON partner_invites (owner_user_id, created_at DESC)`
