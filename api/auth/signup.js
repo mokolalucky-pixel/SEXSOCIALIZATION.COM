@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     requireMethod(req, ['POST'])
     await ensureSchema()
 
-    const { email: rawEmail, name, password } = await readJson(req)
+    const { email: rawEmail, name, password, gender: rawGender } = await readJson(req)
     const email = normalizeEmail(rawEmail)
     const displayName = String(name || '').trim()
 
@@ -23,7 +23,10 @@ export default async function handler(req, res) {
       throw Object.assign(new Error('Password must contain at least 8 characters.'), { statusCode: 400 })
     }
 
-    const userRecord = createUserRecord({ email, displayName, password })
+    const allowedGenders = new Set(['female', 'male', 'non-binary', 'prefer-not-to-say'])
+    const gender = allowedGenders.has(String(rawGender || '').toLowerCase()) ? String(rawGender).toLowerCase() : null
+
+    const userRecord = createUserRecord({ email, displayName, password, gender })
 
     try {
       await getSql()`
@@ -42,6 +45,7 @@ export default async function handler(req, res) {
       id: userRecord.id,
       email: userRecord.email,
       display_name: userRecord.displayName,
+      gender: userRecord.gender,
     }
 
     await createSession(req, res, user.id)

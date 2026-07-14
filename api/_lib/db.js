@@ -25,8 +25,11 @@ export async function ensureSchema() {
         email TEXT UNIQUE NOT NULL,
         display_name TEXT NOT NULL,
         password_hash TEXT NOT NULL,
+        gender TEXT,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )`
+
+      await db\`ALTER TABLE users ADD COLUMN IF NOT EXISTS gender TEXT\`
 
       await db`CREATE TABLE IF NOT EXISTS sessions (
         id_hash TEXT PRIMARY KEY,
