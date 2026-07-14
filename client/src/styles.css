@@ -471,3 +471,53 @@ input:focus-visible {
 .invite-link-field input::placeholder {
   color: rgba(213, 190, 223, 0.72);
 }
+
+.inline-form input,
+.circle-tab {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.55rem;
+  background: var(--bg-soft);
+  color: var(--text);
+  font: inherit;
+  padding: 0.75rem;
+}
+
+.circle-layout {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.45fr) 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.circle-list,
+.contact-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.circle-tab {
+  cursor: pointer;
+  text-align: left;
+}
+
+.circle-tab.active {
+  border-color: var(--accent);
+  background: rgba(255, 79, 163, 0.14);
+}
+
+.circle-tab strong,
+.circle-tab span {
+  display: block;
+}
+
+.circle-tab span {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 720px) {
+  .circle-layout {
+    grid-template-columns: 1fr;
+  }
+}

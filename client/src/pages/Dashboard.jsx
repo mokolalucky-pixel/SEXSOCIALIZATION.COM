@@ -14,6 +14,7 @@ import { createPartnerInvite, loadLatestPartnerInvite } from '../services/invite
 import MessagingPanel from '../components/MessagingPanel.jsx'
 import CallPanel from '../components/CallPanel.jsx'
 import ModerationPanel from '../components/ModerationPanel.jsx'
+import CirclesPanel from '../components/CirclesPanel.jsx'
 
 function Dashboard() {
   const { user } = useAuth()
@@ -250,6 +251,7 @@ function Dashboard() {
         </div>
       </section>
 
+      <CirclesPanel />
       <MessagingPanel />
       <CallPanel />
       <ModerationPanel isAdmin={user?.isAdmin} />
