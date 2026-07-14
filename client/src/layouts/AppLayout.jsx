@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.js'
+import Avatar from '../components/Avatar.jsx'
 
 function AppLayout() {
   const { isAuthenticated, logout, user } = useAuth()
@@ -34,7 +35,10 @@ function AppLayout() {
             ) : (
               <>
                 <li>
-                  <NavLink to="/dashboard">Dashboard</NavLink>
+                  <NavLink to="/dashboard" className="nav-avatar-link">
+                    <Avatar url={user?.avatarUrl} name={user?.displayName} size={28} />
+                    Dashboard
+                  </NavLink>
                 </li>
                 <li>
                   <button type="button" className="ghost-button" onClick={logout}>

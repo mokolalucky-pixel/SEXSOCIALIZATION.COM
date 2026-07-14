@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { joinCircle, leaveCircle, loadCircleMembers, loadCircles } from '../services/circleService.js'
 import { useAuth } from '../hooks/useAuth.js'
+import Avatar from './Avatar.jsx'
 
 function CirclesPanel() {
   const { user } = useAuth()
@@ -168,7 +169,8 @@ function CirclesPanel() {
                   <div className="contact-list">
                     <h4>Members{regionFilter ? ` in "${regionFilter}"` : ''} ({members.length})</h4>
                     {members.length ? members.map((member) => (
-                      <article className="report-card" key={member.id}>
+                      <article className="report-card member-card" key={member.id}>
+                        <Avatar url={member.avatarUrl} name={member.displayName} size={36} />
                         <p><strong>{member.displayName}</strong>{member.isYou ? ' (you)' : ''}</p>
                         {member.gender ? <p>Gender: {member.gender}</p> : null}
                         {member.region ? <p>Region: {member.region}</p> : null}

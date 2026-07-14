@@ -15,9 +15,10 @@ import MessagingPanel from '../components/MessagingPanel.jsx'
 import CallPanel from '../components/CallPanel.jsx'
 import ModerationPanel from '../components/ModerationPanel.jsx'
 import CirclesPanel from '../components/CirclesPanel.jsx'
+import AvatarUpload from '../components/AvatarUpload.jsx'
 
 function Dashboard() {
-  const { user } = useAuth()
+  const { user, updateUser } = useAuth()
   const [agreement, setAgreement] = useState(() => createAgreementDraft(user))
   const [statusMessage, setStatusMessage] = useState('Loading saved draft…')
   const [saveError, setSaveError] = useState('')
@@ -131,6 +132,7 @@ function Dashboard() {
       <div className="dashboard-header">
         <div>
           <h1 id="dashboard-title">Partner agreement workspace</h1>
+          <AvatarUpload user={user} onUpdated={updateUser} />
           <p>Welcome back, {user?.displayName || user?.email}.</p>
           <p className="save-status">
             Draft storage: <strong>{persistenceMode}</strong>. Status: <strong>{statusMessage}</strong>. Last updated:{' '}

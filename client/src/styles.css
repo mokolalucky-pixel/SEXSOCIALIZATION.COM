@@ -551,3 +551,43 @@ input:focus-visible {
   color: var(--text);
   background: var(--bg-soft);
 }
+
+.avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.avatar-placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 79, 163, 0.28);
+  color: var(--accent-soft);
+  font-weight: 700;
+}
+
+.avatar-upload {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.avatar-upload-controls {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.nav-avatar-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.member-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}

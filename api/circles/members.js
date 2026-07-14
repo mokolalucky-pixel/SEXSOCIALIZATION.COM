@@ -25,7 +25,7 @@ export default async function handler(req, res) {
 
     const members = normalizedRegion
       ? await db`
-          SELECT users.id, users.display_name, users.gender, users.region, community_circle_members.joined_at
+          SELECT users.id, users.display_name, users.gender, users.region, users.avatar_url, community_circle_members.joined_at
           FROM community_circle_members
           JOIN users ON users.id = community_circle_members.user_id
           WHERE community_circle_members.circle_type = ${circleType}
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
           LIMIT 100
         `
       : await db`
-          SELECT users.id, users.display_name, users.gender, users.region, community_circle_members.joined_at
+          SELECT users.id, users.display_name, users.gender, users.region, users.avatar_url, community_circle_members.joined_at
           FROM community_circle_members
           JOIN users ON users.id = community_circle_members.user_id
           WHERE community_circle_members.circle_type = ${circleType}
@@ -48,6 +48,7 @@ export default async function handler(req, res) {
         displayName: member.display_name,
         gender: member.gender,
         region: member.region,
+        avatarUrl: member.avatar_url,
         joinedAt: member.joined_at,
         isYou: member.id === user.id,
       })),
