@@ -102,6 +102,30 @@ export async function ensureSchema() {
 
       await db`CREATE INDEX IF NOT EXISTS moderation_reports_status_created_at_idx
         ON moderation_reports (status, created_at DESC)`
+
+      await db`CREATE TABLE IF NOT EXISTS circles (
+        id TEXT PRIMARY KEY,
+        owner_user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        description TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`
+
+      await db`CREATE INDEX IF NOT EXISTS circles_owner_created_at_idx
+        ON circles (owner_user_id, created_at DESC)`
+
+      await db`CREATE TABLE IF NOT EXISTS circle_contacts (
+        id TEXT PRIMARY KEY,
+        circle_id TEXT NOT NULL REFERENCES circles(id) ON DELETE CASCADE,
+        owner_user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        display_name TEXT NOT NULL,
+        contact TEXT NOT NULL,
+        relationship TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`
+
+      await db`CREATE INDEX IF NOT EXISTS circle_contacts_circle_created_at_idx
+        ON circle_contacts (circle_id, created_at DESC)`
     })()
   }
 
