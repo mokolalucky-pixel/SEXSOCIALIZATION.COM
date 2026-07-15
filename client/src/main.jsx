@@ -6,6 +6,15 @@ import AgeGate from './components/AgeGate.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import './styles.css'
 
+// Register service worker for PWA / Add to Home Screen support
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {
+      // Service worker registration failed — app still works without it
+    })
+  })
+}
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AgeGate>
