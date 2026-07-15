@@ -7,6 +7,7 @@ function CallPanel() {
   const [status, setStatus] = useState('Loading call room…')
   const [error, setError] = useState('')
   const [isCreating, setIsCreating] = useState(false)
+  const [inCall, setInCall] = useState(false)
 
   useEffect(() => {
     let isMounted = true
@@ -16,12 +17,16 @@ function CallPanel() {
         if (isMounted) {
           setRoom(loadedRoom)
           setPartner(loadedPartner)
-          setStatus(loadedPartner ? 'Call room foundation ready.' : 'Accept a partner invite to create a call room.')
+          setStatus(
+            loadedPartner
+              ? 'Call room foundation ready.'
+              : 'Accept a partner invite to create a call room.',
+          )
         }
       })
-      .catch((error) => {
+      .catch((err) => {
         if (isMounted) {
-          setError(error.message)
+          setError(err.message)
           setStatus('')
         }
       })
@@ -39,12 +44,64 @@ function CallPanel() {
       const { room: nextRoom, partner: loadedPartner } = await createCallRoom()
       setRoom(nextRoom)
       setPartner(loadedPartner)
-      setStatus(nextRoom.roomUrl ? 'Call room ready.' : 'Call room saved. Connect a WebRTC provider to activate live video.')
-    } catch (error) {
-      setError(error.message)
+      setStatus('Call room ready. Click "Join call" to start.')
+    } catch (err) {
+      setError(err.message)
     } finally {
       setIsCreating(false)
     }
+  }
+
+  function handleJoinCall() {
+    setInCall(true)
+  }
+
+  function handleLeaveCall() {
+    setInCall(false)
+  }
+
+  if (inCall && room?.roomUrl) {
+    return (
+      <section className="workflow-card stacked-card" aria-labelledby="call-title">
+        <div>
+          <p className="eyebrow">Live call</p>
+          <h2 id="call-title">Voice &amp; Video call</h2>
+          {partner ? (
+            <p className="save-status">
+              Partner: <strong>{partner.partnerEmail}</strong>
+            </p>
+          ) : null}
+        </div>
+        <div
+          style={{
+            position: 'relative',
+            width: '100%',
+            paddingBottom: '56.25%',
+            borderRadius: '8px',
+            overflow: 'hidden',
+            background: '#111',
+          }}
+        >
+          <iframe
+            title="Video call"
+            src={room.roomUrl}
+            allow="camera; microphone; autoplay; display-capture"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              border: 'none',
+            }}
+          />
+        </div>
+        <div className="action-row">
+          <button className="button secondary" type="button" onClick={handleLeaveCall}>
+            Leave call
+          </button>
+        </div>
+      </section>
+    )
   }
 
   return (
@@ -53,19 +110,40 @@ function CallPanel() {
         <p className="eyebrow">Video calls</p>
         <h2 id="call-title">Partner call room</h2>
         <p>
-          Vercel Functions store call-room state; live audio/video needs a WebRTC provider join URL configured.
+          Create a call room to start a live voice &amp; video session with your partner via Daily.
         </p>
-        {partner ? <p className="save-status">Partner: <strong>{partner.partnerEmail}</strong></p> : null}
-        {room ? <p className="save-status">Room status: <strong>{room.status}</strong></p> : null}
+        {partner ? (
+          <p className="save-status">
+            Partner: <strong>{partner.partnerEmail}</strong>
+          </p>
+        ) : null}
+        {room ? (
+          <p className="save-status">
+            Room status: <strong>{room.status}</strong>
+          </p>
+        ) : null}
         {status ? <p className="save-status">{status}</p> : null}
-        {error ? <p className="error-message" role="alert">{error}</p> : null}
+        {error ? (
+          <p className="error-message" role="alert">
+            {error}
+          </p>
+        ) : null}
       </div>
 
       <div className="action-row">
-        <button className="button" type="button" onClick={handleCreateRoom} disabled={!partner || isCreating}>
+        <button
+          className="button"
+          type="button"
+          onClick={handleCreateRoom}
+          disabled={!partner || isCreating}
+        >
           {isCreating ? 'Creating…' : 'Create call room'}
         </button>
-        {room?.roomUrl ? <a className="button secondary" href={room.roomUrl}>Join call</a> : null}
+        {room?.roomUrl ? (
+          <button className="button secondary" type="button" onClick={handleJoinCall}>
+            Join call
+          </button>
+        ) : null}
       </div>
     </section>
   )
