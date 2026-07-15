@@ -46,7 +46,9 @@ function AgeGate({ children }) {
         </p>
         <p className="age-gate-sub">
           By clicking <em>I Am 18+</em> you confirm that you are of legal age in your jurisdiction
-          and agree to our terms.
+          and agree to our{' '}
+          <a href="/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a> and{' '}
+          <a href="/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
         </p>
         <div className="age-gate-actions">
           <button className="button" type="button" onClick={confirm}>

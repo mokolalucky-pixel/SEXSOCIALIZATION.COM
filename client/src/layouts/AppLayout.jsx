@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { Link, NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.js'
 import Avatar from '../components/Avatar.jsx'
 
@@ -61,6 +61,11 @@ function AppLayout() {
         ) : (
           <p>Private relationship communication workspace for consenting adults 18+.</p>
         )}
+        <nav aria-label="Legal" className="footer-legal">
+          <Link to="/privacy">Privacy Policy</Link>
+          <span aria-hidden="true"> | </span>
+          <Link to="/terms">Terms of Service</Link>
+        </nav>
       </footer>
     </>
   )
