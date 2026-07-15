@@ -150,6 +150,17 @@ export async function ensureSchema() {
 
       await db`CREATE INDEX IF NOT EXISTS circle_contacts_circle_created_at_idx
         ON circle_contacts (circle_id, created_at DESC)`
+
+      await db`CREATE TABLE IF NOT EXISTS community_circle_members (
+        id TEXT PRIMARY KEY,
+        circle_type TEXT NOT NULL,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        joined_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE (circle_type, user_id)
+      )`
+
+      await db`CREATE INDEX IF NOT EXISTS community_circle_members_type_joined_idx
+        ON community_circle_members (circle_type, joined_at DESC)`
     })()
   }
 
