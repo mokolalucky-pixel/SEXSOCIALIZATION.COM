@@ -39,6 +39,11 @@ export async function ensureSchema() {
 
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS verified BOOLEAN NOT NULL DEFAULT FALSE`
 
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_status TEXT`
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT`
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_id TEXT`
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscribed_at TIMESTAMPTZ`
+
       await db`CREATE TABLE IF NOT EXISTS verification_codes (
         id TEXT PRIMARY KEY,
         user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
