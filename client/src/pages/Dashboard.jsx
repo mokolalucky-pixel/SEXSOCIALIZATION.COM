@@ -11,6 +11,7 @@ import {
 } from '../services/agreementService.js'
 import { useAuth } from '../hooks/useAuth.js'
 import { createPartnerInvite, loadLatestPartnerInvite } from '../services/inviteService.js'
+import { sendSmsInvite } from '../services/smsService.js'
 import MessagingPanel from '../components/MessagingPanel.jsx'
 import CallPanel from '../components/CallPanel.jsx'
 import ModerationPanel from '../components/ModerationPanel.jsx'
@@ -27,6 +28,7 @@ function Dashboard() {
   const [inviteError, setInviteError] = useState('')
   const [recipientContact, setRecipientContact] = useState('')
   const [isCreatingInvite, setIsCreatingInvite] = useState(false)
+  const [isSendingSmsInvite, setIsSendingSmsInvite] = useState(false)
 
   useEffect(() => {
     let isMounted = true
@@ -93,6 +95,26 @@ function Dashboard() {
       setInviteStatus('')
     } finally {
       setIsCreatingInvite(false)
+    }
+  }
+
+  async function handleSendSmsInvite() {
+    if (!invite?.inviteUrl || !invite?.recipientContact) {
+      return
+    }
+
+    setIsSendingSmsInvite(true)
+    setInviteError('')
+    setInviteStatus('Sending text invite…')
+
+    try {
+      await sendSmsInvite(invite.recipientContact, invite.inviteUrl)
+      setInviteStatus('Text invite sent.')
+    } catch (error) {
+      setInviteError(error.message)
+      setInviteStatus('')
+    } finally {
+      setIsSendingSmsInvite(false)
     }
   }
 
@@ -199,12 +221,14 @@ function Dashboard() {
             </a>
           ) : null}
           {invite?.inviteUrl && invite.deliveryMethod === 'sms' ? (
-            <a
+            <button
               className="button secondary"
-              href={`sms:${invite.recipientContact}?&body=${encodeURIComponent(`Use this private invite link to connect with me: ${invite.inviteUrl}`)}`}
+              type="button"
+              onClick={handleSendSmsInvite}
+              disabled={isSendingSmsInvite}
             >
-              Text invite
-            </a>
+              {isSendingSmsInvite ? 'Sending…' : 'Send text invite'}
+            </button>
           ) : null}
         </div>
       </section>

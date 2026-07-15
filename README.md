@@ -90,6 +90,9 @@ In the Vercel project settings → **Environment Variables**, add:
 | `SESSION_SECRET` | Long random string used to sign session tokens |
 | `ADMIN_EMAILS` | Comma-separated admin account emails for moderation review |
 | `VIDEO_PROVIDER_JOIN_URL` | Optional WebRTC provider join URL used when call rooms become live |
+| `TWILIO_ACCOUNT_SID` | Twilio Account SID used for server-side SMS sending |
+| `TWILIO_AUTH_TOKEN` | Twilio Auth Token used only by Vercel Functions |
+| `TWILIO_FROM_NUMBER` | Twilio sender phone number in E.164 format, for example `+15551234567` |
 | `VITE_APP_NAME` | `SEXSOCIALIZATION.COM` |
 | `VITE_ENVIRONMENT` | `production` |
 | `VITE_AUTH_PROVIDER` | `backend-api` |
