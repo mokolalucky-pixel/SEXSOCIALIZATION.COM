@@ -16,6 +16,7 @@ import MessagingPanel from '../components/MessagingPanel.jsx'
 import CallPanel from '../components/CallPanel.jsx'
 import ModerationPanel from '../components/ModerationPanel.jsx'
 import CirclesPanel from '../components/CirclesPanel.jsx'
+import SubscriptionPanel from '../components/SubscriptionPanel.jsx'
 import AvatarUpload from '../components/AvatarUpload.jsx'
 
 function Dashboard() {
@@ -277,6 +278,7 @@ function Dashboard() {
         </div>
       </section>
 
+      <SubscriptionPanel />
       <CirclesPanel />
       <MessagingPanel />
       <CallPanel />
