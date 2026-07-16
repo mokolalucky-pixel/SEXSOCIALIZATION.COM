@@ -15,6 +15,7 @@ import { sendSmsInvite } from '../services/smsService.js'
 import MessagingPanel from '../components/MessagingPanel.jsx'
 import CallPanel from '../components/CallPanel.jsx'
 import ModerationPanel from '../components/ModerationPanel.jsx'
+import AdminPayoutPanel from '../components/AdminPayoutPanel.jsx'
 import CirclesPanel from '../components/CirclesPanel.jsx'
 import SubscriptionPanel from '../components/SubscriptionPanel.jsx'
 import PayoutPanel from '../components/PayoutPanel.jsx'
@@ -285,6 +286,7 @@ function Dashboard() {
       <MessagingPanel />
       <CallPanel />
       <ModerationPanel isAdmin={user?.isAdmin} />
+      <AdminPayoutPanel isAdmin={user?.isAdmin} />
     </section>
   )
 }
