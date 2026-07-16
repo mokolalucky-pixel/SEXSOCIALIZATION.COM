@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="100" fill="#1a0a2e"/>
+
+  <!-- Inner accent ring -->
+  <circle cx="100" cy="100" r="88" fill="none" stroke="#c2185b" stroke-width="4"/>
+
+  <!-- "sex" text - hot pink, bold -->
+  <text
+    x="100"
+    y="96"
+    text-anchor="middle"
+    font-family="'Arial Black', 'Impact', sans-serif"
+    font-weight="900"
+    font-size="48"
+    fill="#ff4081"
+    letter-spacing="-1"
+  >sex</text>
+
+  <!-- "Soc" text - white, bold -->
+  <text
+    x="100"
+    y="148"
+    text-anchor="middle"
+    font-family="'Arial Black', 'Impact', sans-serif"
+    font-weight="900"
+    font-size="48"
+    fill="#ffffff"
+    letter-spacing="-1"
+  >Soc</text>
+
+  <!-- Divider line -->
+  <line x1="30" y1="108" x2="170" y2="108" stroke="#c2185b" stroke-width="2.5" stroke-linecap="round"/>
+</svg>
