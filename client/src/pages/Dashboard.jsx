@@ -17,12 +17,13 @@ import CallPanel from '../components/CallPanel.jsx'
 import ModerationPanel from '../components/ModerationPanel.jsx'
 import CirclesPanel from '../components/CirclesPanel.jsx'
 import SubscriptionPanel from '../components/SubscriptionPanel.jsx'
+import PayoutPanel from '../components/PayoutPanel.jsx'
 import AvatarUpload from '../components/AvatarUpload.jsx'
 
 function Dashboard() {
   const { user, updateUser } = useAuth()
   const [agreement, setAgreement] = useState(() => createAgreementDraft(user))
-  const [statusMessage, setStatusMessage] = useState('Loading saved draft…')
+  const [statusMessage, setStatusMessage] = useState('Loading saved draft\u2026')
   const [saveError, setSaveError] = useState('')
   const [invite, setInvite] = useState(null)
   const [inviteStatus, setInviteStatus] = useState('')
@@ -34,7 +35,7 @@ function Dashboard() {
   useEffect(() => {
     let isMounted = true
 
-    setStatusMessage('Loading saved draft…')
+    setStatusMessage('Loading saved draft\u2026')
     setSaveError('')
     loadAgreementDraft(user)
       .then((savedAgreement) => {
@@ -84,7 +85,7 @@ function Dashboard() {
   async function handleCreateInvite() {
     setIsCreatingInvite(true)
     setInviteError('')
-    setInviteStatus('Creating invite…')
+    setInviteStatus('Creating invite\u2026')
 
     try {
       const nextInvite = await createPartnerInvite(recipientContact)
@@ -106,7 +107,7 @@ function Dashboard() {
 
     setIsSendingSmsInvite(true)
     setInviteError('')
-    setInviteStatus('Sending text invite…')
+    setInviteStatus('Sending text invite\u2026')
 
     try {
       await sendSmsInvite(invite.recipientContact, invite.inviteUrl)
@@ -136,7 +137,7 @@ function Dashboard() {
     const nextAgreement = toggleAgreementItem(agreement, sectionId, itemId)
 
     setAgreement(nextAgreement)
-    setStatusMessage('Saving…')
+    setStatusMessage('Saving\u2026')
     setSaveError('')
 
     saveAgreementDraft(user, nextAgreement)
@@ -206,7 +207,7 @@ function Dashboard() {
         </div>
         <div className="invite-actions">
           <button className="button" type="button" onClick={handleCreateInvite} disabled={isCreatingInvite}>
-            {isCreatingInvite ? 'Creating…' : invite?.inviteUrl ? 'Create new invite' : 'Create invite link'}
+            {isCreatingInvite ? 'Creating\u2026' : invite?.inviteUrl ? 'Create new invite' : 'Create invite link'}
           </button>
           {invite?.inviteUrl ? (
             <button className="button secondary" type="button" onClick={handleCopyInvite}>
@@ -216,7 +217,7 @@ function Dashboard() {
           {invite?.inviteUrl && invite.deliveryMethod === 'email' ? (
             <a
               className="button secondary"
-              href={`mailto:${invite.recipientContact}?subject=${encodeURIComponent('Your SEXSOCIALIZATION.COM partner invite')}&body=${encodeURIComponent(`Use this private invite link to connect with me: ${invite.inviteUrl}`)}`}
+              href={`mailto:${invite.recipientContact}?subject=${encodeURIComponent('Your SEXSOCIALIZATION.COM partner invite')}&body=${encodeURIComponent(`Use this private invite link to connect with me on SEXSOCIALIZATION.COM: ${invite.inviteUrl}`)}`}
             >
               Email invite
             </a>
@@ -228,7 +229,7 @@ function Dashboard() {
               onClick={handleSendSmsInvite}
               disabled={isSendingSmsInvite}
             >
-              {isSendingSmsInvite ? 'Sending…' : 'Send text invite'}
+              {isSendingSmsInvite ? 'Sending\u2026' : 'Send text invite'}
             </button>
           ) : null}
         </div>
@@ -279,6 +280,7 @@ function Dashboard() {
       </section>
 
       <SubscriptionPanel />
+      <PayoutPanel />
       <CirclesPanel />
       <MessagingPanel />
       <CallPanel />
