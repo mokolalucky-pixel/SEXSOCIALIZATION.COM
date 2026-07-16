@@ -6,10 +6,7 @@ function formatAmount(amount) {
 }
 
 function formatDate(value) {
-  if (!value) {
-    return '-'
-  }
-
+  if (!value) return '-'
   return new Date(value).toLocaleString()
 }
 
@@ -21,9 +18,7 @@ function AdminPayoutPanel({ isAdmin }) {
   const [statusMessage, setStatusMessage] = useState('')
 
   useEffect(() => {
-    if (!isAdmin) {
-      return
-    }
+    if (!isAdmin) return
 
     let isMounted = true
 
@@ -41,18 +36,18 @@ function AdminPayoutPanel({ isAdmin }) {
         }
       })
 
-    return () => {
-      isMounted = false
-    }
+    return () => { isMounted = false }
   }, [isAdmin])
 
-  if (!isAdmin) {
-    return null
-  }
+  if (!isAdmin) return null
 
   async function refreshPayouts() {
-    const data = await loadAdminPayouts()
-    setPayouts(Array.isArray(data) ? data : [])
+    try {
+      const data = await loadAdminPayouts()
+      setPayouts(Array.isArray(data) ? data : [])
+    } catch (nextError) {
+      setError(nextError.message)
+    }
   }
 
   async function handleAction(requestId, action) {
@@ -76,8 +71,8 @@ function AdminPayoutPanel({ isAdmin }) {
       <div>
         <p className="eyebrow">Admin payouts</p>
         <h2 id="admin-payouts-title">Payout requests</h2>
-        <p>Review pending payout requests and mark each request as completed or rejected.</p>
-        {statusMessage ? <p className="save-status">{statusMessage}</p> : null}
+        <p>Review pending payout requests and mark each as completed or rejected.</p>
+        {statusMessage ? <p className="save-status" role="status">{statusMessage}</p> : null}
         {error ? <p className="error-message" role="alert">{error}</p> : null}
       </div>
 
@@ -88,10 +83,10 @@ function AdminPayoutPanel({ isAdmin }) {
           <table>
             <thead>
               <tr>
-                <th>User ID</th>
+                <th>User</th>
                 <th>Account Holder</th>
                 <th>Bank</th>
-                <th>Amount (ZAR)</th>
+                <th>Amount</th>
                 <th>Account Type</th>
                 <th>Status</th>
                 <th>Date Requested</th>
@@ -106,12 +101,12 @@ function AdminPayoutPanel({ isAdmin }) {
                 return (
                   <tr key={payout.id}>
                     <td>
-                      <strong>{payout.user_id}</strong>
+                      <strong>{payout.user_display_name || payout.user_id}</strong>
                       {payout.user_email ? <div>{payout.user_email}</div> : null}
                     </td>
                     <td>{payout.account_holder}</td>
                     <td>{payout.bank_name}</td>
-                    <td>R{formatAmount(payout.amount)}</td>
+                    <td>{payout.currency || 'ZAR'} {formatAmount(payout.amount)}</td>
                     <td>{payout.account_type}</td>
                     <td>{payout.status}</td>
                     <td>{formatDate(payout.created_at)}</td>

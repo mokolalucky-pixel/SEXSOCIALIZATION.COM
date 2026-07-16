@@ -15,10 +15,10 @@ import { sendSmsInvite } from '../services/smsService.js'
 import MessagingPanel from '../components/MessagingPanel.jsx'
 import CallPanel from '../components/CallPanel.jsx'
 import ModerationPanel from '../components/ModerationPanel.jsx'
-import AdminPayoutPanel from '../components/AdminPayoutPanel.jsx'
 import CirclesPanel from '../components/CirclesPanel.jsx'
 import SubscriptionPanel from '../components/SubscriptionPanel.jsx'
 import PayoutPanel from '../components/PayoutPanel.jsx'
+import AdminPayoutPanel from '../components/AdminPayoutPanel.jsx'
 import AvatarUpload from '../components/AvatarUpload.jsx'
 
 function Dashboard() {
@@ -52,36 +52,26 @@ function Dashboard() {
         }
       })
 
-    return () => {
-      isMounted = false
-    }
+    return () => { isMounted = false }
   }, [user])
-
 
   useEffect(() => {
     let isMounted = true
 
     loadLatestPartnerInvite()
       .then((latestInvite) => {
-        if (isMounted) {
-          setInvite(latestInvite)
-        }
+        if (isMounted) setInvite(latestInvite)
       })
       .catch(() => {
-        if (isMounted) {
-          setInvite(null)
-        }
+        if (isMounted) setInvite(null)
       })
 
-    return () => {
-      isMounted = false
-    }
+    return () => { isMounted = false }
   }, [])
 
   const totalItems = countBoundaryItems()
   const completedCount = countAcceptedItems(agreement)
   const persistenceMode = getPersistenceMode()
-
 
   async function handleCreateInvite() {
     setIsCreatingInvite(true)
@@ -102,9 +92,7 @@ function Dashboard() {
   }
 
   async function handleSendSmsInvite() {
-    if (!invite?.inviteUrl || !invite?.recipientContact) {
-      return
-    }
+    if (!invite?.inviteUrl || !invite?.recipientContact) return
 
     setIsSendingSmsInvite(true)
     setInviteError('')
@@ -122,9 +110,7 @@ function Dashboard() {
   }
 
   async function handleCopyInvite() {
-    if (!invite?.inviteUrl) {
-      return
-    }
+    if (!invite?.inviteUrl) return
 
     try {
       await navigator.clipboard.writeText(invite.inviteUrl)
@@ -166,9 +152,7 @@ function Dashboard() {
           {saveError ? <p className="error-message" role="alert">{saveError}</p> : null}
         </div>
         <div className="status-card" aria-label="Agreement progress">
-          <span className="status-value">
-            {completedCount}/{totalItems}
-          </span>
+          <span className="status-value">{completedCount}/{totalItems}</span>
           <span className="status-label">boundaries reviewed</span>
         </div>
       </div>
@@ -240,9 +224,7 @@ function Dashboard() {
         <div className="section-heading">
           <p className="eyebrow">Step 2</p>
           <h2 id="boundaries-title">Review boundaries checklist</h2>
-          <p>
-            Checklist progress now saves to the backend database for the signed-in account.
-          </p>
+          <p>Checklist progress now saves to the backend database for the signed-in account.</p>
         </div>
 
         <div className="boundary-grid">
