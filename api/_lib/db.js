@@ -44,6 +44,10 @@ export async function ensureSchema() {
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_id TEXT`
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscribed_at TIMESTAMPTZ`
 
+      // Earnings & payout columns
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS earnings_balance NUMERIC(12,2) NOT NULL DEFAULT 0`
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS total_paid_out NUMERIC(12,2) NOT NULL DEFAULT 0`
+
       await db`CREATE TABLE IF NOT EXISTS verification_codes (
         id TEXT PRIMARY KEY,
         user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -166,6 +170,27 @@ export async function ensureSchema() {
 
       await db`CREATE INDEX IF NOT EXISTS community_circle_members_type_joined_idx
         ON community_circle_members (circle_type, joined_at DESC)`
+
+      // Payout requests table
+      await db`CREATE TABLE IF NOT EXISTS payout_requests (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        amount NUMERIC(12,2) NOT NULL,
+        currency TEXT NOT NULL DEFAULT 'ZAR',
+        bank_name TEXT NOT NULL,
+        account_holder TEXT NOT NULL,
+        account_type TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'pending',
+        processed_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`
+
+      await db`CREATE INDEX IF NOT EXISTS payout_requests_user_id_idx
+        ON payout_requests (user_id, created_at DESC)`
+
+      await db`CREATE INDEX IF NOT EXISTS payout_requests_status_idx
+        ON payout_requests (status, created_at DESC)`
+
     })()
   }
 
