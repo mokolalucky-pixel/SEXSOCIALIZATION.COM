@@ -10,3 +10,14 @@ export async function processPayoutAction(requestId, action) {
     body: JSON.stringify({ requestId, action }),
   })
 }
+
+export async function loadAdminPayoutSetup() {
+  return apiRequest('/api/payments/admin-payout-setup')
+}
+
+export async function saveAdminPayoutSetup(details) {
+  return apiRequest('/api/payments/admin-payout-setup', {
+    method: 'POST',
+    body: JSON.stringify(details),
+  })
+}

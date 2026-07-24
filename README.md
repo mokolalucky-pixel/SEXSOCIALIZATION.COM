@@ -123,8 +123,60 @@ The app now has backend auth and database-backed agreement drafts. Remaining pro
 - [x] Authenticated partner messaging backed by the database
 - [x] Call-room foundation for a WebRTC provider
 - [x] Admin moderation report queue
+- [x] South African payout setup with Stripe fallback handling
 - [ ] End-to-end encryption for message payloads
 - [ ] Live video provider integration (LiveKit, Daily.co, Twilio, etc.)
 - [ ] Automated tests (Vitest + React Testing Library recommended)
 - [ ] Privacy Policy and Terms of Service pages (required for adult platforms)
 - [x] Social preview asset for OG/Twitter card rendering
+
+## South Africa Payout Setup
+
+This app supports South African (ZA) bank account payouts in ZAR. Because Stripe does not currently support automated payouts to South African bank accounts, payout processing follows a manual EFT flow.
+
+### How to configure (admin)
+
+1. Sign in with an admin account and go to the Dashboard.
+2. Scroll to the **"Configure ZA payout bank account"** section.
+3. Fill in your South African banking details:
+   - **Account holder name** — full legal name
+   - **Bank name** — e.g. TymeBank, FNB, Capitec, ABSA, Standard Bank
+   - **Account number** — 8–16 digit numeric account number
+   - **Branch code** — 6-digit universal branch code (e.g. `678910` for TymeBank, `632005` for FNB)
+   - **Account type** — Cheque, Savings, or Transmission
+4. Click **Save payout details**. The system will attempt to register the account with Stripe.
+
+### Stripe fallback behavior
+
+Stripe does not support ZA external accounts for automated payouts. When you save ZA details, the system:
+
+- **Saves your banking details** to the database regardless of Stripe's response.
+- **Attempts Stripe token creation** for the ZA bank account.
+- If Stripe rejects (expected for ZA):
+  - The payout method is marked **`unsupported_or_manual`**.
+  - A clear admin-facing message is shown: _"Stripe does not currently support automated payouts to South African bank accounts. Your banking details have been saved. To pay out, transfer manually via EFT or use an alternative payment provider such as Wise."_
+  - The admin is prompted to process payouts manually.
+- If Stripe accepts (future scenario if ZA support is added):
+  - The payout method is marked **`verified`**.
+
+### Manual payout workflow
+
+When a user submits a payout request:
+
+1. An admin sees the pending request in the **Payout requests** table below.
+2. The admin transfers the payout amount manually via EFT or Wise using the saved banking details.
+3. The admin clicks **✅ Mark Complete** on the request to record it as processed.
+
+### Environment variables (backward compatibility)
+
+If you prefer to configure payout details via environment variables instead of the admin UI (for example, during initial deployment), set these in Vercel Project Settings:
+
+| Variable | Description |
+|----------|-------------|
+| `PAYOUT_BANK_NAME` | Bank name (e.g. `TymeBank`) |
+| `PAYOUT_ACCOUNT_HOLDER` | Account holder full name |
+| `PAYOUT_ACCOUNT_NUMBER` | Bank account number |
+| `PAYOUT_BRANCH_CODE` | 6-digit branch code |
+| `PAYOUT_ACCOUNT_TYPE` | Account type (`Cheque`, `Savings`, or `Transmission`) |
+
+DB-stored configuration (set via admin UI) takes precedence over environment variables.

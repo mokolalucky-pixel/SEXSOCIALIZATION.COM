@@ -191,6 +191,21 @@ export async function ensureSchema() {
       await db`CREATE INDEX IF NOT EXISTS payout_requests_status_idx
         ON payout_requests (status, created_at DESC)`
 
+      // Admin-configured payout settings (single-row config table)
+      await db`CREATE TABLE IF NOT EXISTS payout_config (
+        id TEXT PRIMARY KEY DEFAULT 'default',
+        bank_name TEXT NOT NULL,
+        account_holder TEXT NOT NULL,
+        account_number TEXT NOT NULL,
+        branch_code TEXT NOT NULL,
+        account_type TEXT NOT NULL,
+        country TEXT NOT NULL DEFAULT 'ZA',
+        currency TEXT NOT NULL DEFAULT 'ZAR',
+        stripe_status TEXT NOT NULL DEFAULT 'not_attempted',
+        stripe_message TEXT,
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`
+
     })()
   }
 

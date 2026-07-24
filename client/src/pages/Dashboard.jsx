@@ -19,6 +19,7 @@ import CirclesPanel from '../components/CirclesPanel.jsx'
 import SubscriptionPanel from '../components/SubscriptionPanel.jsx'
 import PayoutPanel from '../components/PayoutPanel.jsx'
 import AdminPayoutPanel from '../components/AdminPayoutPanel.jsx'
+import AdminPayoutSetupPanel from '../components/AdminPayoutSetupPanel.jsx'
 import AvatarUpload from '../components/AvatarUpload.jsx'
 
 function Dashboard() {
@@ -268,6 +269,7 @@ function Dashboard() {
       <MessagingPanel />
       <CallPanel />
       <ModerationPanel isAdmin={user?.isAdmin} />
+      <AdminPayoutSetupPanel isAdmin={user?.isAdmin} />
       <AdminPayoutPanel isAdmin={user?.isAdmin} />
     </section>
   )
