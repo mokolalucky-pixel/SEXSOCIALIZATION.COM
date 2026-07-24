@@ -36,7 +36,13 @@ async function attemptStripeZaBankValidation({ accountHolder, accountNumber, bra
       },
       body: params,
     })
-    const result = await response.json().catch(() => ({}))
+    let result = {}
+    try {
+      result = await response.json()
+    } catch {
+      // Stripe returned a non-JSON body; treat as an unknown error and fall through
+      // to the unsupported-country path so the payout details are still saved.
+    }
 
     if (response.ok) {
       return { supported: true, error: null }

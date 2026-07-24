@@ -94,7 +94,9 @@ function AdminPayoutSetupPanel({ isAdmin }) {
             bankName: data.config.bankName || '',
             branchCode: data.config.branchCode || '',
             accountType: data.config.accountType || 'cheque',
-            // Never pre-fill the account number field — admin must re-enter it
+            // Security: never pre-fill the account number from the server response.
+            // Returning a raw account number to the browser would expose it in React
+            // state and DevTools. The admin must re-enter it to confirm intent.
             accountNumber: '',
           }))
         }
