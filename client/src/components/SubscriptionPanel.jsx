@@ -5,12 +5,14 @@ const PLANS = [
   {
     name: 'Monthly',
     description: 'Full access to all features, billed monthly.',
+    price: 'R99/month',
     priceId: import.meta.env.VITE_STRIPE_MONTHLY_PRICE_ID || '',
     label: 'Subscribe monthly',
   },
   {
     name: 'Annual',
     description: 'Full access to all features, billed annually. Save with the yearly plan.',
+    price: 'R990/year (two months free)',
     priceId: import.meta.env.VITE_STRIPE_ANNUAL_PRICE_ID || '',
     label: 'Subscribe annually',
   },
@@ -98,7 +100,7 @@ function SubscriptionPanel() {
         <p className="eyebrow">Subscription</p>
         <h2 id="sub-title">Premium membership</h2>
         <p>
-          Upgrade to premium for full access to video calls, advanced circles, and priority support.
+          Upgrade to premium for full access to video calls, advanced circles, priority support, and referral earnings.
         </p>
         {status === 'cancelled' ? (
           <p className="save-status">
@@ -121,7 +123,7 @@ function SubscriptionPanel() {
             onClick={() => handleSubscribe(plan)}
             disabled={!!loading}
           >
-            {loading === plan.name ? 'Redirecting...' : plan.label}
+            {loading === plan.name ? 'Redirecting...' : `${plan.label} — ${plan.price}`}
           </button>
         ))}
       </div>
