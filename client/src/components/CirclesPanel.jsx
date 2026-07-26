@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { joinCircle, leaveCircle, loadCircleMembers, loadCircles } from '../services/circleService.js'
 import { useAuth } from '../hooks/useAuth.js'
 import Avatar from './Avatar.jsx'
+import MixedCirclePosts from './MixedCirclePosts.jsx'
 
 function CirclesPanel() {
   const { user } = useAuth()
@@ -154,8 +155,9 @@ function CirclesPanel() {
                 ) : null}
               </div>
 
-              {selectedCircle.joined ? (
+              {selectedCircle.joined || (selectedCircle.type === 'mixed' && user?.isAdmin) ? (
                 <>
+                  {selectedCircle.type === 'mixed' ? <MixedCirclePosts isAdmin={user?.isAdmin} /> : null}
                   <label className="invite-link-field" htmlFor="region-filter">
                     Filter members by region
                     <input

@@ -232,6 +232,36 @@ export async function ensureSchema() {
       await db`CREATE INDEX IF NOT EXISTS community_circle_members_type_joined_idx
         ON community_circle_members (circle_type, joined_at DESC)`
 
+      await db`CREATE TABLE IF NOT EXISTS circle_posts (
+        id TEXT PRIMARY KEY,
+        circle_type TEXT NOT NULL,
+        author_user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        body TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`
+
+      await db`CREATE INDEX IF NOT EXISTS circle_posts_type_created_at_idx
+        ON circle_posts (circle_type, created_at DESC)`
+
+      await db`CREATE TABLE IF NOT EXISTS circle_comments (
+        id TEXT PRIMARY KEY,
+        post_id TEXT NOT NULL REFERENCES circle_posts(id) ON DELETE CASCADE,
+        author_user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        body TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`
+
+      await db`CREATE INDEX IF NOT EXISTS circle_comments_post_created_at_idx
+        ON circle_comments (post_id, created_at ASC)`
+
+      await db`CREATE TABLE IF NOT EXISTS circle_reactions (
+        post_id TEXT NOT NULL REFERENCES circle_posts(id) ON DELETE CASCADE,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        reaction TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        PRIMARY KEY (post_id, user_id)
+      )`
+
       // Payout requests table
       await db`CREATE TABLE IF NOT EXISTS payout_requests (
         id TEXT PRIMARY KEY,
