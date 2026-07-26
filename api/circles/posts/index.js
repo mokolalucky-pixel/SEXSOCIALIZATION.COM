@@ -14,7 +14,7 @@ async function requireMembership(db, userId, circleType) {
 
 async function postsForViewer(db, userId, circleType) {
   const posts = await db`
-    SELECT circle_posts.id, circle_posts.body, circle_posts.created_at, users.display_name,
+    SELECT circle_posts.id, circle_posts.body, circle_posts.created_at, circle_posts.edited_at, circle_posts.author_user_id, users.display_name,
       COALESCE(reactions.count, 0)::int AS reaction_count,
       EXISTS(SELECT 1 FROM circle_reactions WHERE post_id = circle_posts.id AND user_id = ${userId}) AS reacted
     FROM circle_posts JOIN users ON users.id = circle_posts.author_user_id
@@ -22,11 +22,28 @@ async function postsForViewer(db, userId, circleType) {
     WHERE circle_posts.circle_type = ${circleType}
     ORDER BY circle_posts.created_at DESC LIMIT 50`
   const comments = await db`
-    SELECT circle_comments.id, circle_comments.post_id, circle_comments.body, circle_comments.created_at, users.display_name
+    SELECT circle_comments.id, circle_comments.post_id, circle_comments.body, circle_comments.created_at, circle_comments.edited_at, circle_comments.author_user_id, users.display_name
     FROM circle_comments JOIN users ON users.id = circle_comments.author_user_id
     WHERE circle_comments.post_id IN (SELECT id FROM circle_posts WHERE circle_type = ${circleType})
     ORDER BY circle_comments.created_at ASC`
-  return posts.map((post) => ({ id: post.id, body: post.body, createdAt: post.created_at, authorName: post.display_name, reactionCount: post.reaction_count, reacted: post.reacted, comments: comments.filter((comment) => comment.post_id === post.id).map((comment) => ({ id: comment.id, body: comment.body, createdAt: comment.created_at, authorName: comment.display_name })) }))
+  return posts.map((post) => ({
+    id: post.id,
+    body: post.body,
+    createdAt: post.created_at,
+    editedAt: post.edited_at || null,
+    authorName: post.display_name,
+    mine: post.author_user_id === userId,
+    reactionCount: post.reaction_count,
+    reacted: post.reacted,
+    comments: comments.filter((comment) => comment.post_id === post.id).map((comment) => ({
+      id: comment.id,
+      body: comment.body,
+      createdAt: comment.created_at,
+      editedAt: comment.edited_at || null,
+      authorName: comment.display_name,
+      mine: comment.author_user_id === userId,
+    })),
+  }))
 }
 
 export default async function handler(req, res) {
