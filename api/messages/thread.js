@@ -10,12 +10,13 @@ function publicMessage(message, userId) {
     body: message.body,
     mine: message.sender_user_id === userId,
     createdAt: message.created_at,
+    editedAt: message.edited_at || null,
   }
 }
 
 async function listMessages(user, partner) {
   const rows = await getSql()`
-    SELECT id, sender_user_id, recipient_user_id, body, created_at
+    SELECT id, sender_user_id, recipient_user_id, body, edited_at, created_at
     FROM private_messages
     WHERE (sender_user_id = ${user.id} AND recipient_user_id = ${partner.partnerUserId})
       OR (sender_user_id = ${partner.partnerUserId} AND recipient_user_id = ${user.id})
@@ -53,7 +54,7 @@ export default async function handler(req, res) {
     const [message] = await getSql()`
       INSERT INTO private_messages (id, sender_user_id, recipient_user_id, body)
       VALUES (${randomUUID()}, ${user.id}, ${partner.partnerUserId}, ${messageBody})
-      RETURNING id, sender_user_id, recipient_user_id, body, created_at
+      RETURNING id, sender_user_id, recipient_user_id, body, edited_at, created_at
     `
 
     sendJson(res, 201, { message: publicMessage(message, user.id) })

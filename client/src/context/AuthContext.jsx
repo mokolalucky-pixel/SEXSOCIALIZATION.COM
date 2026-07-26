@@ -48,10 +48,10 @@ export function AuthProvider({ children }) {
         await apiRequest('/api/auth/logout', { method: 'POST' })
         setUser(null)
       },
-      signup: async ({ email, name, password, gender, region }) => {
+      signup: async ({ email, name, password, gender, region, referralToken }) => {
         const result = await apiRequest('/api/auth/signup', {
           method: 'POST',
-          body: JSON.stringify({ email, name, password, gender, region }),
+          body: JSON.stringify({ email, name, password, gender, region, referralToken }),
         })
         return result
       },
