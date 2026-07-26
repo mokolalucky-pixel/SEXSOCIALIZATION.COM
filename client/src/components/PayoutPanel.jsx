@@ -1,123 +1,16 @@
 import { useEffect, useState } from 'react'
-import { loadPayoutInfo, requestPayout } from '../services/payoutService.js'
+import { loadPayoutInfo, requestPayout, savePayoutDetails } from '../services/payoutService.js'
 
+const emptyDetails = { bankName: '', accountHolder: '', accountNumber: '', branchCode: '', accountType: '' }
 function PayoutPanel() {
-  const [info, setInfo] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [requesting, setRequesting] = useState(false)
-  const [successMessage, setSuccessMessage] = useState('')
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    let isMounted = true
-
-    loadPayoutInfo()
-      .then((data) => {
-        if (isMounted) {
-          setInfo(data)
-          setLoading(false)
-        }
-      })
-      .catch((err) => {
-        if (isMounted) {
-          setError(err.message)
-          setLoading(false)
-        }
-      })
-
-    return () => {
-      isMounted = false
-    }
-  }, [])
-
-  async function handleRequestPayout() {
-    setRequesting(true)
-    setError('')
-    setSuccessMessage('')
-
-    try {
-      const result = await requestPayout()
-      setSuccessMessage(result.message)
-      // Refresh payout info after successful request
-      const updated = await loadPayoutInfo()
-      setInfo(updated)
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setRequesting(false)
-    }
-  }
-
-  if (loading) {
-    return (
-      <section className="workflow-card stacked-card" aria-labelledby="payout-title">
-        <div>
-          <p className="eyebrow">Earnings</p>
-          <h2 id="payout-title">Payout</h2>
-          <p className="save-status">Loading payout info...</p>
-        </div>
-      </section>
-    )
-  }
-
-  const balance = info?.earnings?.availableBalance ?? 0
-  const totalPaidOut = info?.earnings?.totalPaidOut ?? 0
-  const canPayout = balance >= 50
-
-  return (
-    <section className="workflow-card stacked-card" aria-labelledby="payout-title">
-      <div>
-        <p className="eyebrow">Earnings</p>
-        <h2 id="payout-title">Payout</h2>
-
-        <div className="status-card" aria-label="Earnings balance" style={{ marginBottom: '1rem' }}>
-          <span className="status-value">R{Number(balance).toFixed(2)}</span>
-          <span className="status-label">available balance (ZAR)</span>
-        </div>
-
-        {totalPaidOut > 0 ? (
-          <p className="save-status">
-            Total paid out to date: <strong>R{Number(totalPaidOut).toFixed(2)}</strong>
-          </p>
-        ) : null}
-
-        {info?.payout ? (
-          <p className="save-status">
-            Payout bank: <strong>{info.payout.bankName}</strong> &mdash; {info.payout.accountHolder} ({info.payout.accountType})
-          </p>
-        ) : null}
-
-        {!canPayout && !successMessage ? (
-          <p className="save-status">
-            Minimum payout is <strong>R50.00</strong>. Keep earning to unlock your payout.
-          </p>
-        ) : null}
-
-        {successMessage ? (
-          <p className="save-status" role="status" style={{ color: 'green' }}>
-            ✅ {successMessage}
-          </p>
-        ) : null}
-
-        {error ? (
-          <p className="error-message" role="alert">
-            {error}
-          </p>
-        ) : null}
-      </div>
-
-      <div className="action-row">
-        <button
-          className="button"
-          type="button"
-          onClick={handleRequestPayout}
-          disabled={!canPayout || requesting}
-        >
-          {requesting ? 'Submitting...' : `Request Payout (R${Number(balance).toFixed(2)})`}
-        </button>
-      </div>
-    </section>
-  )
+  const [info, setInfo] = useState(null); const [details, setDetails] = useState(emptyDetails)
+  const [loading, setLoading] = useState(true); const [saving, setSaving] = useState(false); const [error, setError] = useState(''); const [status, setStatus] = useState('')
+  async function refresh() { const data = await loadPayoutInfo(); setInfo(data); setLoading(false) }
+  useEffect(() => { refresh().catch((nextError) => { setError(nextError.message); setLoading(false) }) }, [])
+  async function save(event) { event.preventDefault(); setSaving(true); setError(''); try { await savePayoutDetails(details); setStatus('Payout banking details saved.'); await refresh() } catch (nextError) { setError(nextError.message) } finally { setSaving(false) } }
+  async function payout() { setSaving(true); setError(''); try { const result = await requestPayout(); setStatus(result.message); await refresh() } catch (nextError) { setError(nextError.message) } finally { setSaving(false) } }
+  if (loading) return <section className="workflow-card"><p>Loading payout details...</p></section>
+  const balance = Number(info?.earnings?.availableBalance || 0); const configured = Boolean(info?.payout?.configured)
+  return <section className="workflow-card stacked-card" aria-labelledby="payout-title"><div><p className="eyebrow">Premium earnings</p><h2 id="payout-title">Payout banking</h2><p>Available referral earnings: <strong>R{balance.toFixed(2)}</strong></p>{info?.payout ? <p className="save-status">Current account: {info.payout.bankName} — {info.payout.accountHolder} ({info.payout.accountType})</p> : null}{status ? <p className="save-status">{status}</p> : null}{error ? <p className="error-message" role="alert">{error}</p> : null}</div><form className="inline-form" onSubmit={save}>{Object.entries(details).map(([key, value]) => <label key={key}>{key.replace(/[A-Z]/g, (letter) => ` ${letter}`).replace(/^./, (letter) => letter.toUpperCase())}<input required value={value} onChange={(event) => setDetails((current) => ({ ...current, [key]: event.target.value }))} /></label>)}<button className="button" disabled={saving}>{saving ? 'Saving...' : 'Save payout details'}</button></form><button className="button secondary" type="button" disabled={!configured || balance < 50 || saving} onClick={payout}>Request payout</button></section>
 }
-
 export default PayoutPanel

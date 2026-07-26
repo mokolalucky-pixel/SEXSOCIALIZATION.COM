@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import { createUserRecord, emailPattern, normalizeEmail, publicUser } from '../_lib/auth.js'
 import { ensureSchema, getSql } from '../_lib/db.js'
 import { sendVerificationEmail } from '../_lib/email.js'
@@ -9,7 +10,7 @@ export default async function handler(req, res) {
     requireMethod(req, ['POST'])
     await ensureSchema()
 
-    const { email: rawEmail, name, password, gender: rawGender, region: rawRegion } = await readJson(req)
+    const { email: rawEmail, name, password, gender: rawGender, region: rawRegion, referralToken } = await readJson(req)
     const email = normalizeEmail(rawEmail)
     const displayName = String(name || '').trim()
 
@@ -29,12 +30,19 @@ export default async function handler(req, res) {
     const gender = allowedGenders.has(String(rawGender || '').toLowerCase()) ? String(rawGender).toLowerCase() : null
     const region = String(rawRegion || '').trim().slice(0, 100) || null
 
+    const [hold] = await getSql()`SELECT available_after FROM deleted_account_holds WHERE email = ${email}`
+    if (hold && new Date(hold.available_after).getTime() > Date.now()) {
+      throw Object.assign(new Error('This account can be registered again after the 30-day separation hold.'), { statusCode: 403 })
+    }
+    if (hold) await getSql()`DELETE FROM deleted_account_holds WHERE email = ${email}`
+    const [referral] = referralToken ? await getSql()`
+      SELECT referrer_user_id FROM referral_invites WHERE token_hash = ${createHash('sha256').update(String(referralToken)).digest('base64url')} LIMIT 1` : []
     const userRecord = createUserRecord({ email, displayName, password, gender, region })
 
     try {
       await getSql()`
-        INSERT INTO users (id, email, display_name, password_hash, gender, region, verified)
-        VALUES (${userRecord.id}, ${userRecord.email}, ${userRecord.displayName}, ${userRecord.passwordHash}, ${userRecord.gender}, ${userRecord.region}, FALSE)
+        INSERT INTO users (id, email, display_name, password_hash, gender, region, verified, referred_by_user_id)
+        VALUES (${userRecord.id}, ${userRecord.email}, ${userRecord.displayName}, ${userRecord.passwordHash}, ${userRecord.gender}, ${userRecord.region}, FALSE, ${referral?.referrer_user_id || null})
       `
     } catch (error) {
       if (error.message?.includes('duplicate key') || error.code === '23505') {

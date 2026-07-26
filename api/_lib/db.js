@@ -43,6 +43,36 @@ export async function ensureSchema() {
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT`
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_id TEXT`
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscribed_at TIMESTAMPTZ`
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS referred_by_user_id TEXT REFERENCES users(id) ON DELETE SET NULL`
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS payout_bank_name TEXT`
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS payout_account_holder TEXT`
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS payout_account_number TEXT`
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS payout_branch_code TEXT`
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS payout_account_type TEXT`
+
+      await db`CREATE TABLE IF NOT EXISTS deleted_account_holds (
+        email TEXT PRIMARY KEY,
+        available_after TIMESTAMPTZ NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`
+
+      await db`CREATE TABLE IF NOT EXISTS referral_invites (
+        id TEXT PRIMARY KEY,
+        referrer_user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+        token_hash TEXT UNIQUE NOT NULL,
+        is_admin_referral BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`
+
+      await db`CREATE TABLE IF NOT EXISTS referral_commissions (
+        id TEXT PRIMARY KEY,
+        referred_user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        beneficiary_user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+        stripe_invoice_id TEXT UNIQUE NOT NULL,
+        amount NUMERIC(12,2) NOT NULL,
+        currency TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`
 
       // Earnings & payout columns
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS earnings_balance NUMERIC(12,2) NOT NULL DEFAULT 0`
@@ -110,8 +140,11 @@ export async function ensureSchema() {
         sender_user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         recipient_user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         body TEXT NOT NULL,
+        edited_at TIMESTAMPTZ,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )`
+
+      await db`ALTER TABLE private_messages ADD COLUMN IF NOT EXISTS edited_at TIMESTAMPTZ`
 
       await db`CREATE INDEX IF NOT EXISTS private_messages_pair_created_at_idx
         ON private_messages (sender_user_id, recipient_user_id, created_at DESC)`

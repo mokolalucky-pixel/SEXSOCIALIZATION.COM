@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { loadMessageThread, sendPrivateMessage } from '../services/messageService.js'
+import { deletePrivateMessage, editPrivateMessage, loadMessageThread, sendPrivateMessage } from '../services/messageService.js'
 
 function MessagingPanel() {
   const [partner, setPartner] = useState(null)
@@ -31,6 +31,23 @@ function MessagingPanel() {
       isMounted = false
     }
   }, [])
+
+  async function handleEdit(message) {
+    const body = window.prompt('Edit message', message.body)
+    if (body === null) return
+    try {
+      const updated = await editPrivateMessage(message.id, body)
+      setMessages((current) => current.map((item) => item.id === updated.id ? updated : item))
+    } catch (nextError) { setError(nextError.message) }
+  }
+
+  async function handleDelete(message) {
+    if (!window.confirm('Delete this message?')) return
+    try {
+      await deletePrivateMessage(message.id)
+      setMessages((current) => current.filter((item) => item.id !== message.id))
+    } catch (nextError) { setError(nextError.message) }
+  }
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -66,7 +83,8 @@ function MessagingPanel() {
         {messages.length ? messages.map((message) => (
           <article className={message.mine ? 'message-bubble mine' : 'message-bubble'} key={message.id}>
             <p>{message.body}</p>
-            <small>{new Date(message.createdAt).toLocaleString()}</small>
+            <small>{new Date(message.createdAt).toLocaleString()}{message.editedAt ? ' · edited' : ''}</small>
+            {message.mine ? <div className="action-row"><button className="button secondary" type="button" onClick={() => handleEdit(message)}>Edit</button><button className="button secondary" type="button" onClick={() => handleDelete(message)}>Delete</button></div> : null}
           </article>
         )) : <p className="save-status">No messages yet.</p>}
       </div>

@@ -1,17 +1,4 @@
 import { apiRequest } from './apiClient.js'
-
-/**
- * Fetch the current user's payout info and earnings balance.
- */
-export async function loadPayoutInfo() {
-  return apiRequest('/api/payments/payout')
-}
-
-/**
- * Submit a payout request for the user's available earnings.
- */
-export async function requestPayout() {
-  return apiRequest('/api/payments/payout-request', {
-    method: 'POST',
-  })
-}
+export async function loadPayoutInfo() { return apiRequest('/api/payments/payout') }
+export async function savePayoutDetails(details) { return apiRequest('/api/payments/payout', { method: 'POST', body: JSON.stringify(details) }) }
+export async function requestPayout() { return apiRequest('/api/payments/payout-request', { method: 'POST' }) }

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.js'
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -7,6 +7,7 @@ const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 function SignUp() {
   const { signup, verify, resendCode } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [step, setStep] = useState('register')
   const [formState, setFormState] = useState({
     name: '',
@@ -58,6 +59,7 @@ function SignUp() {
         password: formState.password,
         gender: formState.gender,
         region: formState.region,
+        referralToken: searchParams.get('ref') || undefined,
       })
 
       setVerificationState({
