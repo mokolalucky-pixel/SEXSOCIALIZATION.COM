@@ -123,11 +123,30 @@ export async function ensureSchema() {
         provider TEXT NOT NULL DEFAULT 'pending-provider',
         status TEXT NOT NULL DEFAULT 'ready',
         room_url TEXT,
+        invite_id TEXT REFERENCES partner_invites(id) ON DELETE CASCADE,
+        room_name TEXT,
+        expires_at TIMESTAMPTZ,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )`
 
+      await db`ALTER TABLE call_rooms ADD COLUMN IF NOT EXISTS invite_id TEXT REFERENCES partner_invites(id) ON DELETE CASCADE`
+      await db`ALTER TABLE call_rooms ADD COLUMN IF NOT EXISTS room_name TEXT`
+      await db`ALTER TABLE call_rooms ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ`
+
       await db`CREATE INDEX IF NOT EXISTS call_rooms_owner_created_at_idx
         ON call_rooms (owner_user_id, created_at DESC)`
+
+      await db`CREATE INDEX IF NOT EXISTS call_rooms_invite_expires_at_idx
+        ON call_rooms (invite_id, expires_at DESC)`
+
+      await db`CREATE TABLE IF NOT EXISTS call_room_creation_attempts (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`
+
+      await db`CREATE INDEX IF NOT EXISTS call_room_creation_attempts_user_created_at_idx
+        ON call_room_creation_attempts (user_id, created_at DESC)`
 
       await db`CREATE TABLE IF NOT EXISTS moderation_reports (
         id TEXT PRIMARY KEY,
