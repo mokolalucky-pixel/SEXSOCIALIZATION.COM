@@ -1,12 +1,9 @@
 import { apiRequest } from './apiClient.js'
 
-export async function sendSmsInvite(to, inviteUrl) {
+export async function sendSmsInvite(inviteUrl) {
   const { message } = await apiRequest('/api/sms/send', {
     method: 'POST',
-    body: JSON.stringify({
-      to,
-      message: `Use this private invite link to connect with me on SEXSOCIALIZATION.COM: ${inviteUrl}`,
-    }),
+    body: JSON.stringify({ inviteUrl }),
   })
 
   return message

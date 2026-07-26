@@ -1,7 +1,10 @@
+import { randomUUID } from 'node:crypto'
 import { requireUser } from '../_lib/auth.js'
+import { getSql } from '../_lib/db.js'
+import { hashInviteToken } from '../_lib/invites.js'
 import { readJson, requireMethod, sendError, sendJson } from '../_lib/http.js'
 
-const MAX_SMS_BODY_LENGTH = 1600
+const MAX_SMS_PER_HOUR = 5
 const E164_PHONE_NUMBER = /^\+[1-9]\d{7,14}$/
 
 function getTwilioConfig() {
@@ -16,22 +19,47 @@ function getTwilioConfig() {
   return { accountSid, authToken, fromNumber }
 }
 
-function normalizePhoneNumber(value) {
-  return String(value || '').trim().replace(/[\s().-]/g, '')
+function inviteTokenFromUrl(value) {
+  try {
+    const url = new URL(String(value || ''))
+    const match = url.pathname.match(/^\/invite\/([^/]+)$/)
+
+    if (!match) {
+      throw new Error('Missing invite token.')
+    }
+
+    return decodeURIComponent(match[1])
+  } catch {
+    throw Object.assign(new Error('A valid invite link is required.'), { statusCode: 400 })
+  }
 }
 
-function normalizeMessage(value) {
-  return String(value || '').trim()
+function requestOrigin(req) {
+  const protocol = req.headers['x-forwarded-proto'] || 'https'
+  return `${protocol}://${req.headers.host}`
+}
+
+async function reserveSmsSend(userId) {
+  const [attempt] = await getSql()`
+    INSERT INTO sms_send_attempts (id, user_id)
+    SELECT ${randomUUID()}, ${userId}
+    WHERE (
+      SELECT COUNT(*)
+      FROM sms_send_attempts
+      WHERE user_id = ${userId}
+        AND created_at > NOW() - INTERVAL '1 hour'
+    ) < ${MAX_SMS_PER_HOUR}
+    RETURNING id
+  `
+
+  if (!attempt) {
+    throw Object.assign(new Error(`SMS limit reached. Try again in an hour.`), { statusCode: 429 })
+  }
 }
 
 async function sendTwilioSms({ to, body }) {
   const { accountSid, authToken, fromNumber } = getTwilioConfig()
-  const payload = new URLSearchParams({
-    To: to,
-    From: fromNumber,
-    Body: body,
-  })
-
+  const payload = new URLSearchParams({ To: to, From: fromNumber, Body: body })
   const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
     method: 'POST',
     headers: {
@@ -40,7 +68,6 @@ async function sendTwilioSms({ to, body }) {
     },
     body: payload,
   })
-
   const result = await response.json().catch(() => ({}))
 
   if (!response.ok) {
@@ -54,29 +81,32 @@ async function sendTwilioSms({ to, body }) {
 export default async function handler(req, res) {
   try {
     requireMethod(req, ['POST'])
-    await requireUser(req)
+    const user = await requireUser(req)
+    const { inviteUrl } = await readJson(req)
+    const token = inviteTokenFromUrl(inviteUrl)
+    const [invite] = await getSql()`
+      SELECT recipient_contact
+      FROM partner_invites
+      WHERE owner_user_id = ${user.id}
+        AND token_hash = ${hashInviteToken(token)}
+        AND status = 'pending'
+        AND delivery_method = 'sms'
+        AND expires_at > NOW()
+      LIMIT 1
+    `
 
-    const { to, message } = await readJson(req)
-    const recipient = normalizePhoneNumber(to)
-    const body = normalizeMessage(message)
-
-    if (!E164_PHONE_NUMBER.test(recipient)) {
-      throw Object.assign(new Error('Use an E.164 phone number, for example +15551234567.'), { statusCode: 400 })
+    if (!invite || !E164_PHONE_NUMBER.test(invite.recipient_contact)) {
+      throw Object.assign(new Error('No eligible SMS invite was found.'), { statusCode: 404 })
     }
 
-    if (body.length < 1 || body.length > MAX_SMS_BODY_LENGTH) {
-      throw Object.assign(new Error(`Message must be between 1 and ${MAX_SMS_BODY_LENGTH} characters.`), { statusCode: 400 })
-    }
-
-    const sms = await sendTwilioSms({ to: recipient, body })
-
-    sendJson(res, 202, {
-      message: {
-        id: sms.sid,
-        status: sms.status,
-        to: recipient,
-      },
+    await reserveSmsSend(user.id)
+    const canonicalInviteUrl = `${requestOrigin(req)}/invite/${encodeURIComponent(token)}`
+    const sms = await sendTwilioSms({
+      to: invite.recipient_contact,
+      body: `Use this private invite link to connect with me on SEXSOCIALIZATION.COM: ${canonicalInviteUrl}`,
     })
+
+    sendJson(res, 202, { message: { id: sms.sid, status: sms.status, to: invite.recipient_contact } })
   } catch (error) {
     sendError(res, error)
   }

@@ -96,6 +96,15 @@ export async function ensureSchema() {
       await db`CREATE INDEX IF NOT EXISTS partner_invites_owner_user_id_idx
         ON partner_invites (owner_user_id, created_at DESC)`
 
+      await db`CREATE TABLE IF NOT EXISTS sms_send_attempts (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`
+
+      await db`CREATE INDEX IF NOT EXISTS sms_send_attempts_user_created_at_idx
+        ON sms_send_attempts (user_id, created_at DESC)`
+
       await db`CREATE TABLE IF NOT EXISTS private_messages (
         id TEXT PRIMARY KEY,
         sender_user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
