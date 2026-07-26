@@ -240,6 +240,8 @@ export async function ensureSchema() {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )`
 
+      await db`ALTER TABLE circle_posts ADD COLUMN IF NOT EXISTS edited_at TIMESTAMPTZ`
+
       await db`CREATE INDEX IF NOT EXISTS circle_posts_type_created_at_idx
         ON circle_posts (circle_type, created_at DESC)`
 
@@ -250,6 +252,8 @@ export async function ensureSchema() {
         body TEXT NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )`
+
+      await db`ALTER TABLE circle_comments ADD COLUMN IF NOT EXISTS edited_at TIMESTAMPTZ`
 
       await db`CREATE INDEX IF NOT EXISTS circle_comments_post_created_at_idx
         ON circle_comments (post_id, created_at ASC)`
