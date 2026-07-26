@@ -100,7 +100,7 @@ function Dashboard() {
     setInviteStatus('Sending text invite\u2026')
 
     try {
-      await sendSmsInvite(invite.recipientContact, invite.inviteUrl)
+      await sendSmsInvite(invite.inviteUrl)
       setInviteStatus('Text invite sent.')
     } catch (error) {
       setInviteError(error.message)
