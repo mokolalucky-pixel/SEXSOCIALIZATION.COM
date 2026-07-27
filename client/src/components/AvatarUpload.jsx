@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react'
-import { uploadAvatar } from '../services/profileService.js'
+import { useEffect, useRef, useState } from 'react'
+import { deleteAvatar, uploadAvatar } from '../services/profileService.js'
 import Avatar from './Avatar.jsx'
 
 const MAX_SIZE = 5 * 1024 * 1024
@@ -36,41 +36,93 @@ async function compressAvatar(file) {
 
 function AvatarUpload({ user, onUpdated }) {
   const inputRef = useRef(null)
+  const [selectedFile, setSelectedFile] = useState(null)
+  const [previewUrl, setPreviewUrl] = useState('')
   const [status, setStatus] = useState('')
   const [error, setError] = useState('')
-  const [isUploading, setIsUploading] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
 
-  async function handleFileChange(event) {
+  useEffect(() => {
+    if (!selectedFile) {
+      setPreviewUrl('')
+      return undefined
+    }
+
+    const nextPreviewUrl = URL.createObjectURL(selectedFile)
+    setPreviewUrl(nextPreviewUrl)
+    return () => URL.revokeObjectURL(nextPreviewUrl)
+  }, [selectedFile])
+
+  function handleFileChange(event) {
     const file = event.target.files?.[0]
     if (!file) return
 
+    setSelectedFile(file)
+    setStatus('Picture selected. Upload it when ready.')
     setError('')
-    setIsUploading(true)
+    event.target.value = ''
+  }
+
+  function clearSelection() {
+    setSelectedFile(null)
+    setStatus('')
+    setError('')
+  }
+
+  async function handleUpload() {
+    if (!selectedFile) return
+
+    setError('')
+    setIsSaving(true)
 
     try {
-      const needsCompression = file.size > MAX_SIZE
+      const needsCompression = selectedFile.size > MAX_SIZE
       setStatus(needsCompression ? 'Compressing image…' : 'Uploading…')
-      const avatar = needsCompression ? await compressAvatar(file) : file
+      const avatar = needsCompression ? await compressAvatar(selectedFile) : selectedFile
       if (needsCompression) setStatus('Uploading compressed image…')
       const updatedUser = await uploadAvatar(avatar)
+      setSelectedFile(null)
       setStatus('Profile picture updated.')
       onUpdated(updatedUser)
     } catch (nextError) {
       setError(nextError.message)
       setStatus('')
     } finally {
-      setIsUploading(false)
-      if (inputRef.current) inputRef.current.value = ''
+      setIsSaving(false)
     }
   }
 
+  async function handleDelete() {
+    setError('')
+    setIsSaving(true)
+
+    try {
+      const updatedUser = await deleteAvatar()
+      setSelectedFile(null)
+      setStatus('Profile picture deleted.')
+      onUpdated(updatedUser)
+    } catch (nextError) {
+      setError(nextError.message)
+      setStatus('')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const avatarUrl = previewUrl || user?.avatarUrl
+
   return (
     <div className="avatar-upload">
-      <Avatar url={user?.avatarUrl} name={user?.displayName} size={72} />
+      <Avatar url={avatarUrl} name={user?.displayName} size={72} />
       <div className="avatar-upload-controls">
-        <label className="button secondary" htmlFor="avatar-file-input">{isUploading ? 'Uploading…' : 'Change picture'}</label>
-        <input ref={inputRef} id="avatar-file-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleFileChange} disabled={isUploading} hidden />
-        <p className="save-status">Images up to 5 MB upload directly. Larger JPEG, PNG, and WebP images are compressed before upload.</p>
+        <div className="avatar-upload-actions">
+          <label className="button secondary" htmlFor="avatar-file-input">Edit picture</label>
+          <input ref={inputRef} id="avatar-file-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleFileChange} disabled={isSaving} hidden />
+          {selectedFile ? <button className="button" type="button" onClick={handleUpload} disabled={isSaving}>{isSaving ? 'Saving…' : 'Upload picture'}</button> : null}
+          {selectedFile ? <button className="button secondary" type="button" onClick={clearSelection} disabled={isSaving}>Cancel</button> : null}
+          {user?.avatarUrl ? <button className="button secondary danger-button" type="button" onClick={handleDelete} disabled={isSaving}>Delete picture</button> : null}
+        </div>
+        <p className="save-status">Choose a picture to preview it. It is not uploaded until you select Upload picture.</p>
         {status ? <p className="save-status">{status}</p> : null}
         {error ? <p className="error-message" role="alert">{error}</p> : null}
       </div>

@@ -14,3 +14,18 @@ export async function uploadAvatar(file) {
 
   return payload.user
 }
+
+export async function deleteAvatar() {
+  const response = await fetch('/api/auth/avatar', {
+    method: 'DELETE',
+    credentials: 'include',
+  })
+
+  const payload = await response.json().catch(() => ({}))
+
+  if (!response.ok) {
+    throw new Error(payload.error || 'Failed to delete avatar.')
+  }
+
+  return payload.user
+}
