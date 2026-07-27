@@ -1,4 +1,4 @@
-import { put } from '@vercel/blob'
+import { del, put } from '@vercel/blob'
 import { requireUser, publicUser } from '../_lib/auth.js'
 import { ensureSchema, getSql } from '../_lib/db.js'
 import { requireMethod, sendError, sendJson } from '../_lib/http.js'
@@ -10,11 +10,37 @@ export const config = {
   api: { bodyParser: false },
 }
 
+async function getUpdatedUser(userId) {
+  const [updatedUser] = await getSql()`
+    SELECT id, email, display_name, gender, region, avatar_url
+    FROM users WHERE id = ${userId} LIMIT 1
+  `
+
+  return publicUser(updatedUser)
+}
+
+async function removeBlob(url) {
+  if (!url) return
+
+  try {
+    await del(url)
+  } catch (error) {
+    console.error('Failed to remove avatar blob', error)
+  }
+}
+
 export default async function handler(req, res) {
   try {
-    requireMethod(req, ['PUT'])
+    requireMethod(req, ['PUT', 'DELETE'])
     await ensureSchema()
     const user = await requireUser(req)
+
+    if (req.method === 'DELETE') {
+      await getSql()`UPDATE users SET avatar_url = NULL WHERE id = ${user.id}`
+      await removeBlob(user.avatar_url)
+      sendJson(res, 200, { user: await getUpdatedUser(user.id) })
+      return
+    }
 
     const contentType = req.headers['content-type'] || ''
 
@@ -52,13 +78,9 @@ export default async function handler(req, res) {
     })
 
     await getSql()`UPDATE users SET avatar_url = ${blob.url} WHERE id = ${user.id}`
+    await removeBlob(user.avatar_url)
 
-    const [updatedUser] = await getSql()`
-      SELECT id, email, display_name, gender, region, avatar_url
-      FROM users WHERE id = ${user.id} LIMIT 1
-    `
-
-    sendJson(res, 200, { user: publicUser(updatedUser) })
+    sendJson(res, 200, { user: await getUpdatedUser(user.id) })
   } catch (error) {
     sendError(res, error)
   }

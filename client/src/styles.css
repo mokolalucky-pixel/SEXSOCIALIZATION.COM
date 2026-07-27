@@ -580,6 +580,16 @@ input:focus-visible {
   gap: 0.35rem;
 }
 
+.avatar-upload-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.danger-button {
+  color: #fecaca;
+}
+
 .nav-avatar-link {
   display: inline-flex;
   align-items: center;

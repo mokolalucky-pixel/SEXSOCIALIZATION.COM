@@ -122,7 +122,7 @@ export async function getCurrentUser(req) {
   }
 
   const [user] = await getSql()`
-    SELECT users.id, users.email, users.display_name
+    SELECT users.id, users.email, users.display_name, users.avatar_url
     FROM sessions
     JOIN users ON users.id = sessions.user_id
     WHERE sessions.id_hash = ${hashSessionToken(token)}
