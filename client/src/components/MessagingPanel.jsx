@@ -8,6 +8,10 @@ function MessagingPanel() {
   const [status, setStatus] = useState('Loading messages…')
   const [error, setError] = useState('')
   const [isSending, setIsSending] = useState(false)
+  const [editingMessageId, setEditingMessageId] = useState(null)
+  const [editingBody, setEditingBody] = useState('')
+  const [deletingMessageId, setDeletingMessageId] = useState(null)
+  const [isUpdating, setIsUpdating] = useState(false)
 
   useEffect(() => {
     let isMounted = true
@@ -32,21 +36,52 @@ function MessagingPanel() {
     }
   }, [])
 
+  function startEditing(message) {
+    setError('')
+    setDeletingMessageId(null)
+    setEditingMessageId(message.id)
+    setEditingBody(message.body)
+  }
+
+  function cancelEditing() {
+    setEditingMessageId(null)
+    setEditingBody('')
+  }
+
   async function handleEdit(message) {
-    const body = window.prompt('Edit message', message.body)
-    if (body === null) return
+    const nextBody = editingBody.trim()
+    if (!nextBody) {
+      setError('Message cannot be empty.')
+      return
+    }
+
+    setError('')
+    setIsUpdating(true)
     try {
-      const updated = await editPrivateMessage(message.id, body)
+      const updated = await editPrivateMessage(message.id, nextBody)
       setMessages((current) => current.map((item) => item.id === updated.id ? updated : item))
-    } catch (nextError) { setError(nextError.message) }
+      cancelEditing()
+      setStatus('Message updated.')
+    } catch (nextError) {
+      setError(nextError.message)
+    } finally {
+      setIsUpdating(false)
+    }
   }
 
   async function handleDelete(message) {
-    if (!window.confirm('Delete this message?')) return
+    setError('')
+    setIsUpdating(true)
     try {
       await deletePrivateMessage(message.id)
       setMessages((current) => current.filter((item) => item.id !== message.id))
-    } catch (nextError) { setError(nextError.message) }
+      setDeletingMessageId(null)
+      setStatus('Message deleted.')
+    } catch (nextError) {
+      setError(nextError.message)
+    } finally {
+      setIsUpdating(false)
+    }
   }
 
   async function handleSubmit(event) {
@@ -82,9 +117,33 @@ function MessagingPanel() {
       <div className="message-list" aria-live="polite">
         {messages.length ? messages.map((message) => (
           <article className={message.mine ? 'message-bubble mine' : 'message-bubble'} key={message.id}>
-            <p>{message.body}</p>
+            {editingMessageId === message.id ? (
+              <form className="inline-form" onSubmit={(event) => { event.preventDefault(); handleEdit(message) }}>
+                <label htmlFor={`edit-message-${message.id}`}>Edit message</label>
+                <textarea id={`edit-message-${message.id}`} value={editingBody} onChange={(event) => setEditingBody(event.target.value)} maxLength="1000" required disabled={isUpdating} />
+                <div className="action-row">
+                  <button className="button" type="submit" disabled={isUpdating}>{isUpdating ? 'Saving…' : 'Save'}</button>
+                  <button className="button secondary" type="button" onClick={cancelEditing} disabled={isUpdating}>Cancel</button>
+                </div>
+              </form>
+            ) : <p>{message.body}</p>}
             <small>{new Date(message.createdAt).toLocaleString()}{message.editedAt ? ' · edited' : ''}</small>
-            {message.mine ? <div className="action-row"><button className="button secondary" type="button" onClick={() => handleEdit(message)}>Edit</button><button className="button secondary" type="button" onClick={() => handleDelete(message)}>Delete</button></div> : null}
+            {message.mine && editingMessageId !== message.id ? (
+              <div className="action-row">
+                {deletingMessageId === message.id ? (
+                  <>
+                    <span className="save-status">Delete this message?</span>
+                    <button className="button danger-button" type="button" onClick={() => handleDelete(message)} disabled={isUpdating}>{isUpdating ? 'Deleting…' : 'Confirm delete'}</button>
+                    <button className="button secondary" type="button" onClick={() => setDeletingMessageId(null)} disabled={isUpdating}>Cancel</button>
+                  </>
+                ) : (
+                  <>
+                    <button className="button secondary" type="button" onClick={() => startEditing(message)} disabled={isUpdating}>Edit</button>
+                    <button className="button secondary danger-button" type="button" onClick={() => { setEditingMessageId(null); setDeletingMessageId(message.id) }} disabled={isUpdating}>Delete</button>
+                  </>
+                )}
+              </div>
+            ) : null}
           </article>
         )) : <p className="save-status">No messages yet.</p>}
       </div>
