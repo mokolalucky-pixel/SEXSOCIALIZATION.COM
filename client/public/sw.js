@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sexsoc-v1'
+const CACHE_NAME = 'sexsoc-v2'
 const PRECACHE_URLS = ['/', '/favicon.svg', '/logo.svg', '/icons.svg']
 
 self.addEventListener('install', (event) => {
