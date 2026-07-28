@@ -3,10 +3,11 @@ import { readJson, requireMethod, sendError, sendJson } from '../_lib/http.js'
 
 function getStripeConfig() {
   const secretKey = process.env.STRIPE_SECRET_KEY
+  const priceIds = [process.env.STRIPE_MONTHLY_PRICE_ID, process.env.STRIPE_ANNUAL_PRICE_ID].filter(Boolean)
   if (!secretKey) {
     throw Object.assign(new Error('Payment provider is not configured.'), { statusCode: 503 })
   }
-  return { secretKey }
+  return { secretKey, priceIds }
 }
 
 async function stripeRequest(path, body) {
@@ -41,6 +42,11 @@ export default async function handler(req, res) {
 
     if (!priceId) {
       throw Object.assign(new Error('priceId is required.'), { statusCode: 400 })
+    }
+
+    const { priceIds } = getStripeConfig()
+    if (!priceIds.includes(priceId)) {
+      throw Object.assign(new Error('Invalid subscription plan.'), { statusCode: 400 })
     }
 
     const origin = `https://${req.headers.host}`
