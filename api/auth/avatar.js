@@ -1,4 +1,5 @@
-import { del, put } from '@vercel/blob'
+import { del, get, put } from '@vercel/blob'
+import { Readable } from 'node:stream'
 import { requireUser, publicUser } from '../_lib/auth.js'
 import { ensureSchema, getSql } from '../_lib/db.js'
 import { requireMethod, sendError, sendJson } from '../_lib/http.js'
@@ -31,9 +32,19 @@ async function removeBlob(url) {
 
 export default async function handler(req, res) {
   try {
-    requireMethod(req, ['PUT', 'DELETE'])
+    requireMethod(req, ['GET', 'PUT', 'DELETE'])
     await ensureSchema()
     const user = await requireUser(req)
+
+    if (req.method === 'GET') {
+      const [account] = await getSql()`SELECT avatar_url FROM users WHERE id = ${user.id} LIMIT 1`
+      if (!account?.avatar_url) throw Object.assign(new Error('Profile picture not found.'), { statusCode: 404 })
+      const { stream, blob } = await get(account.avatar_url, { access: 'private' })
+      res.setHeader('Content-Type', blob.contentType || 'application/octet-stream')
+      res.setHeader('Cache-Control', 'private, max-age=3600')
+      Readable.fromWeb(stream).pipe(res)
+      return
+    }
 
     if (req.method === 'DELETE') {
       await getSql()`UPDATE users SET avatar_url = NULL WHERE id = ${user.id}`
@@ -72,7 +83,7 @@ export default async function handler(req, res) {
     const filename = `avatars/${user.id}.${extension}`
 
     const blob = await put(filename, buffer, {
-      access: 'public',
+      access: 'private',
       contentType,
       addRandomSuffix: true,
     })
