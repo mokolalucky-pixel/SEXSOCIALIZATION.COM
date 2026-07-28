@@ -5,18 +5,21 @@ import { readJson, requireMethod, sendError, sendJson } from '../_lib/http.js'
 
 export default async function handler(req, res) {
   try {
-    requireMethod(req, ['PATCH', 'DELETE'])
+    requireMethod(req, ['POST', 'PATCH', 'DELETE'])
     const user = await requireUser(req)
     const partner = await getPartnerForUser(user.id)
     if (!partner) throw Object.assign(new Error('An active partner relationship is required.'), { statusCode: 403 })
     const id = String(req.query.id || '')
     if (!id) throw Object.assign(new Error('Message ID is required.'), { statusCode: 400 })
-    if (req.method === 'DELETE') {
+    const requestBody = req.method === 'POST' ? await readJson(req) : null
+    const action = req.method === 'POST' ? requestBody.action : req.method
+    if (req.method === 'POST' && !['edit', 'delete'].includes(action)) throw Object.assign(new Error('Invalid message action.'), { statusCode: 400 })
+    if (action === 'delete' || action === 'DELETE') {
       const [deleted] = await getSql()`DELETE FROM private_messages WHERE id = ${id} AND sender_user_id = ${user.id} AND recipient_user_id = ${partner.partnerUserId} RETURNING id`
       if (!deleted) throw Object.assign(new Error('Message not found.'), { statusCode: 404 })
       sendJson(res, 200, { deleted: true, id }); return
     }
-    const { body } = await readJson(req); const messageBody = String(body || '').trim()
+    const body = req.method === 'POST' ? requestBody.body : (await readJson(req)).body; const messageBody = String(body || '').trim()
     if (messageBody.length < 1 || messageBody.length > 1000) throw Object.assign(new Error('Message must be between 1 and 1000 characters.'), { statusCode: 400 })
     const [message] = await getSql()`UPDATE private_messages SET body = ${messageBody}, edited_at = NOW() WHERE id = ${id} AND sender_user_id = ${user.id} AND recipient_user_id = ${partner.partnerUserId} RETURNING id, body, created_at, edited_at`
     if (!message) throw Object.assign(new Error('Message not found.'), { statusCode: 404 })
