@@ -25,7 +25,7 @@ export function publicUser(user) {
     displayName: user.display_name,
     gender: user.gender || null,
     region: user.region || null,
-    avatarUrl: user.avatar_url || null,
+    avatarUrl: user.avatar_url ? '/api/auth/avatar' : null,
     isAdmin: isAdminEmail(user.email),
   }
 }
