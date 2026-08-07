@@ -23,7 +23,22 @@ async function activatePartnerPremium(db, userId) {
     ORDER BY accepted_at DESC LIMIT 1`
   if (!relationship) return
   const partnerId = relationship.owner_user_id === userId ? relationship.partner_user_id : relationship.owner_user_id
-  await db`UPDATE users SET subscription_status = 'active', subscribed_at = COALESCE(subscribed_at, NOW()) WHERE id = ${partnerId}`
+  await db`
+    UPDATE users
+    SET subscription_status = 'active', subscription_owner_id = ${userId}, subscribed_at = COALESCE(subscribed_at, NOW())
+    WHERE id = ${partnerId} AND stripe_customer_id IS NULL`
+}
+async function deactivatePartnerPremium(db, userId) {
+  const [relationship] = await db`
+    SELECT owner_user_id, partner_user_id FROM partner_invites
+    WHERE status = 'accepted' AND (owner_user_id = ${userId} OR partner_user_id = ${userId})
+    ORDER BY accepted_at DESC LIMIT 1`
+  if (!relationship) return
+  const partnerId = relationship.owner_user_id === userId ? relationship.partner_user_id : relationship.owner_user_id
+  await db`
+    UPDATE users
+    SET subscription_status = 'cancelled', subscription_owner_id = NULL
+    WHERE id = ${partnerId} AND subscription_owner_id = ${userId}`
 }
 async function awardCommission(db, invoice) {
   const [referred] = await db`SELECT id, referred_by_user_id FROM users WHERE stripe_customer_id = ${invoice.customer} LIMIT 1`
@@ -55,14 +70,16 @@ export default async function handler(req, res) {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object; const userId = session.metadata?.user_id || session.client_reference_id
       if (userId) {
-        await db`UPDATE users SET subscription_status = 'active', stripe_customer_id = ${session.customer}, subscription_id = ${session.subscription}, subscribed_at = NOW() WHERE id = ${userId}`
+        await db`UPDATE users SET subscription_status = 'active', subscription_owner_id = NULL, stripe_customer_id = ${session.customer}, subscription_id = ${session.subscription}, subscribed_at = NOW() WHERE id = ${userId}`
         await activatePartnerPremium(db, userId)
       }
     } else if (event.type === 'invoice.payment_succeeded') {
       await awardCommission(db, event.data.object)
     } else if (event.type === 'customer.subscription.updated' || event.type === 'customer.subscription.deleted') {
       const subscription = event.data.object; const status = event.type === 'customer.subscription.deleted' ? 'cancelled' : subscription.status
+      const [subscriber] = await db`SELECT id FROM users WHERE stripe_customer_id = ${subscription.customer} LIMIT 1`
       await db`UPDATE users SET subscription_status = ${status} WHERE stripe_customer_id = ${subscription.customer}`
+      if (subscriber && !isPremiumStatus(status)) await deactivatePartnerPremium(db, subscriber.id)
     }
     sendJson(res, 200, { received: true })
   } catch (error) { sendError(res, error) }

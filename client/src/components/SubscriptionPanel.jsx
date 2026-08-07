@@ -36,7 +36,8 @@ function SubscriptionPanel() {
       })
       .catch(() => {
         if (isMounted) {
-          setStatus('none')
+          setStatus('error')
+          setError('Unable to load your subscription status. Please refresh the page or try again later.')
         }
       })
 
