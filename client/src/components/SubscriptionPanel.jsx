@@ -6,14 +6,14 @@ const PLANS = [
     name: 'Monthly',
     description: 'Full access to all features, billed monthly.',
     price: 'R99/month',
-    priceId: import.meta.env.VITE_STRIPE_MONTHLY_PRICE_ID || '',
+    planCode: import.meta.env.VITE_PAYSTACK_MONTHLY_PLAN_CODE || '',
     label: 'Subscribe monthly',
   },
   {
     name: 'Annual',
     description: 'Full access to all features, billed annually. Save with the yearly plan.',
     price: 'R990/year (two months free)',
-    priceId: import.meta.env.VITE_STRIPE_ANNUAL_PRICE_ID || '',
+    planCode: import.meta.env.VITE_PAYSTACK_ANNUAL_PLAN_CODE || '',
     label: 'Subscribe annually',
   },
 ]
@@ -47,8 +47,8 @@ function SubscriptionPanel() {
   }, [])
 
   async function handleSubscribe(plan) {
-    if (!plan.priceId) {
-      setError('This plan is not configured yet. Add VITE_STRIPE_MONTHLY_PRICE_ID or VITE_STRIPE_ANNUAL_PRICE_ID to your environment variables.')
+    if (!plan.planCode) {
+      setError('This plan is not configured yet. Add VITE_PAYSTACK_MONTHLY_PLAN_CODE or VITE_PAYSTACK_ANNUAL_PLAN_CODE to your environment variables.')
       return
     }
 
@@ -56,7 +56,7 @@ function SubscriptionPanel() {
     setError('')
 
     try {
-      const checkoutUrl = await createCheckoutSession(plan.priceId)
+      const checkoutUrl = await createCheckoutSession(plan.planCode)
       window.location.href = checkoutUrl
     } catch (err) {
       setError(err.message)

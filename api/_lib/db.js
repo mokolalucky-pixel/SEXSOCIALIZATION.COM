@@ -42,6 +42,7 @@ export async function ensureSchema() {
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_status TEXT`
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT`
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_id TEXT`
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS paystack_customer_code TEXT`
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_owner_id TEXT REFERENCES users(id) ON DELETE SET NULL`
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscribed_at TIMESTAMPTZ`
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS referred_by_user_id TEXT REFERENCES users(id) ON DELETE SET NULL`
