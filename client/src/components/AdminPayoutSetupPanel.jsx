@@ -35,28 +35,12 @@ function validateField(name, value) {
   }
 }
 
-function StripeStatusBadge({ stripeStatus, stripeMessage }) {
-  if (!stripeStatus || stripeStatus === 'not_attempted') return null
-
-  if (stripeStatus === 'verified') {
-    return (
-      <p className="save-status" role="status" style={{ color: 'green' }}>
-        ✅ Stripe verified — automated payouts are enabled.
-      </p>
-    )
-  }
-
+function PayoutStatusBadge({ payoutStatus, payoutMessage }) {
+  if (!payoutStatus) return null
   return (
-    <div className="error-message" role="alert">
-      <strong>⚠️ Stripe does not support automated ZA payouts</strong>
-      <p style={{ marginTop: '0.5rem' }}>
-        {stripeMessage || 'Your banking details are saved. Process payouts manually via EFT or Wise.'}
-      </p>
-      <p style={{ marginTop: '0.5rem' }}>
-        <strong>What to do:</strong> When a payout request comes in, open your bank app or Wise account
-        and manually transfer the payout amount to the user using EFT. Then mark the payout as completed
-        in the Payout Requests table below.
-      </p>
+    <div className="save-status" role="status">
+      <strong>Manual EFT payouts</strong>
+      <p style={{ marginTop: '0.5rem' }}>{payoutMessage || 'Your banking details are saved. Process payout requests manually by EFT.'}</p>
     </div>
   )
 }
@@ -183,9 +167,9 @@ function AdminPayoutSetupPanel({ isAdmin }) {
               <li>Account type: <strong>{currentConfig.accountType}</strong></li>
               <li>Country / currency: <strong>{currentConfig.country} / {currentConfig.currency}</strong></li>
             </ul>
-            <StripeStatusBadge
-              stripeStatus={currentConfig.stripeStatus}
-              stripeMessage={currentConfig.stripeMessage}
+            <PayoutStatusBadge
+              payoutStatus={currentConfig.payoutStatus}
+              payoutMessage={currentConfig.payoutMessage}
             />
           </div>
         ) : null}

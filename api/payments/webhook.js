@@ -55,9 +55,9 @@ async function awardCommission(db, charge, userId) {
   }
   const amount = Number(charge.amount) / 100 * 0.25
   const [commission] = await db`
-    INSERT INTO referral_commissions (id, referred_user_id, beneficiary_user_id, stripe_invoice_id, amount, currency)
+    INSERT INTO referral_commissions (id, referred_user_id, beneficiary_user_id, payment_reference, amount, currency)
     VALUES (${randomUUID()}, ${referred.id}, ${beneficiaryId}, ${charge.reference}, ${amount}, ${String(charge.currency || 'ZAR').toUpperCase()})
-    ON CONFLICT (stripe_invoice_id) DO NOTHING RETURNING id`
+    ON CONFLICT (payment_reference) DO NOTHING RETURNING id`
   if (commission && beneficiaryId) await db`UPDATE users SET earnings_balance = COALESCE(earnings_balance, 0) + ${amount} WHERE id = ${beneficiaryId}`
 }
 
