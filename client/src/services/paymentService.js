@@ -1,9 +1,9 @@
 import { apiRequest } from './apiClient.js'
 
-export async function createCheckoutSession(priceId) {
+export async function createCheckoutSession(planCode) {
   const { url } = await apiRequest('/api/payments/checkout', {
     method: 'POST',
-    body: JSON.stringify({ priceId }),
+    body: JSON.stringify({ planCode }),
     headers: { 'Content-Type': 'application/json' },
   })
   return url
