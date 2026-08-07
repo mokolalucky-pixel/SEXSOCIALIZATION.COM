@@ -123,7 +123,7 @@ The app now has backend auth and database-backed agreement drafts. Remaining pro
 - [x] Authenticated partner messaging backed by the database
 - [x] Call-room foundation for a WebRTC provider
 - [x] Admin moderation report queue
-- [x] South African payout setup with Stripe fallback handling
+- [x] South African manual EFT payout setup
 - [ ] End-to-end encryption for message payloads
 - [ ] Live video provider integration (LiveKit, Daily.co, Twilio, etc.)
 - [ ] Automated tests (Vitest + React Testing Library recommended)
@@ -132,7 +132,7 @@ The app now has backend auth and database-backed agreement drafts. Remaining pro
 
 ## South Africa Payout Setup
 
-This app supports South African (ZA) bank account payouts in ZAR. Because Stripe does not currently support automated payouts to South African bank accounts, payout processing follows a manual EFT flow.
+This app supports South African (ZA) bank account payouts in ZAR. Payout requests are processed manually by EFT.
 
 ### How to configure (admin)
 
@@ -144,20 +144,11 @@ This app supports South African (ZA) bank account payouts in ZAR. Because Stripe
    - **Account number** — 8–16 digit numeric account number
    - **Branch code** — 6-digit universal branch code (e.g. `678910` for TymeBank, `632005` for FNB)
    - **Account type** — Cheque, Savings, or Transmission
-4. Click **Save payout details**. The system will attempt to register the account with Stripe.
+4. Click **Save payout details**. The details are saved for manual EFT processing.
 
-### Stripe fallback behavior
+### Payout processing
 
-Stripe does not support ZA external accounts for automated payouts. When you save ZA details, the system:
-
-- **Saves your banking details** to the database regardless of Stripe's response.
-- **Attempts Stripe token creation** for the ZA bank account.
-- If Stripe rejects (expected for ZA):
-  - The payout method is marked **`unsupported_or_manual`**.
-  - A clear admin-facing message is shown: _"Stripe does not currently support automated payouts to South African bank accounts. Your banking details have been saved. To pay out, transfer manually via EFT or use an alternative payment provider such as Wise."_
-  - The admin is prompted to process payouts manually.
-- If Stripe accepts (future scenario if ZA support is added):
-  - The payout method is marked **`verified`**.
+Banking details are stored for manual EFT processing. The application does not send payout bank details to a payment provider or attempt automated transfers.
 
 ### Manual payout workflow
 

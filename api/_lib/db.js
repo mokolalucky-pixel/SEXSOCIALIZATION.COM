@@ -40,9 +40,8 @@ export async function ensureSchema() {
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS verified BOOLEAN NOT NULL DEFAULT FALSE`
 
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_status TEXT`
-      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT`
-      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_id TEXT`
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS paystack_customer_code TEXT`
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_id TEXT`
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_owner_id TEXT REFERENCES users(id) ON DELETE SET NULL`
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscribed_at TIMESTAMPTZ`
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS referred_by_user_id TEXT REFERENCES users(id) ON DELETE SET NULL`
@@ -70,7 +69,7 @@ export async function ensureSchema() {
         id TEXT PRIMARY KEY,
         referred_user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         beneficiary_user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
-        stripe_invoice_id TEXT UNIQUE NOT NULL,
+        payment_reference TEXT UNIQUE NOT NULL,
         amount NUMERIC(12,2) NOT NULL,
         currency TEXT NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -289,6 +288,18 @@ export async function ensureSchema() {
         ON payout_requests (status, created_at DESC)`
 
       // Admin-configured payout settings (single-row config table)
+      await db`DO $$ BEGIN
+        IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'referral_commissions' AND column_name = 'stripe_invoice_id') THEN
+          ALTER TABLE referral_commissions RENAME COLUMN stripe_invoice_id TO payment_reference;
+        END IF;
+        IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'payout_config' AND column_name = 'stripe_status') THEN
+          ALTER TABLE payout_config RENAME COLUMN stripe_status TO payout_status;
+        END IF;
+        IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'payout_config' AND column_name = 'stripe_message') THEN
+          ALTER TABLE payout_config RENAME COLUMN stripe_message TO payout_message;
+        END IF;
+      END $$`
+
       await db`CREATE TABLE IF NOT EXISTS payout_config (
         id TEXT PRIMARY KEY DEFAULT 'default',
         bank_name TEXT NOT NULL,
@@ -298,8 +309,8 @@ export async function ensureSchema() {
         account_type TEXT NOT NULL,
         country TEXT NOT NULL DEFAULT 'ZA',
         currency TEXT NOT NULL DEFAULT 'ZAR',
-        stripe_status TEXT NOT NULL DEFAULT 'not_attempted',
-        stripe_message TEXT,
+        payout_status TEXT NOT NULL DEFAULT 'manual',
+        payout_message TEXT,
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )`
 

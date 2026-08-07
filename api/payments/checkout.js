@@ -4,9 +4,8 @@ import { readJson, requireMethod, sendError, sendJson } from '../_lib/http.js'
 function getPaystackConfig() {
   const secretKey = process.env.PAYSTACK_SECRET_KEY
   const planCodes = [process.env.PAYSTACK_MONTHLY_PLAN_CODE, process.env.PAYSTACK_ANNUAL_PLAN_CODE].filter(Boolean)
-  if (!secretKey || planCodes.length === 0) {
-    throw Object.assign(new Error('Payment provider is not configured.'), { statusCode: 503 })
-  }
+  if (!secretKey) throw Object.assign(new Error('PAYSTACK_SECRET_KEY is not configured.'), { statusCode: 503 })
+  if (planCodes.length === 0) throw Object.assign(new Error('Paystack subscription plan codes are not configured.'), { statusCode: 503 })
   return { secretKey, planCodes }
 }
 
