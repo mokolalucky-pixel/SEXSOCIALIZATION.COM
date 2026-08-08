@@ -6,14 +6,14 @@ const PLANS = [
     name: 'Monthly',
     description: 'Full access to all features, billed monthly.',
     price: 'R99/month',
-    planCode: import.meta.env.VITE_PAYSTACK_MONTHLY_PLAN_CODE || '',
+    id: 'monthly',
     label: 'Subscribe monthly',
   },
   {
     name: 'Annual',
     description: 'Full access to all features, billed annually. Save with the yearly plan.',
     price: 'R990/year (two months free)',
-    planCode: import.meta.env.VITE_PAYSTACK_ANNUAL_PLAN_CODE || '',
+    id: 'annual',
     label: 'Subscribe annually',
   },
 ]
@@ -47,16 +47,11 @@ function SubscriptionPanel() {
   }, [])
 
   async function handleSubscribe(plan) {
-    if (!plan.planCode) {
-      setError('This plan is not configured yet. Add VITE_PAYSTACK_MONTHLY_PLAN_CODE or VITE_PAYSTACK_ANNUAL_PLAN_CODE to your environment variables.')
-      return
-    }
-
     setLoading(plan.name)
     setError('')
 
     try {
-      const checkoutUrl = await createCheckoutSession(plan.planCode)
+      const checkoutUrl = await createCheckoutSession(plan.id)
       window.location.href = checkoutUrl
     } catch (err) {
       setError(err.message)

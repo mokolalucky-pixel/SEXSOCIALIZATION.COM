@@ -3,10 +3,10 @@ import { readJson, requireMethod, sendError, sendJson } from '../_lib/http.js'
 
 function getPaystackConfig() {
   const secretKey = process.env.PAYSTACK_SECRET_KEY
-  const planCodes = [process.env.PAYSTACK_MONTHLY_PLAN_CODE, process.env.PAYSTACK_ANNUAL_PLAN_CODE].filter(Boolean)
+  const plans = { monthly: process.env.PAYSTACK_MONTHLY_PLAN_CODE, annual: process.env.PAYSTACK_ANNUAL_PLAN_CODE }
   if (!secretKey) throw Object.assign(new Error('PAYSTACK_SECRET_KEY is not configured.'), { statusCode: 503 })
-  if (planCodes.length === 0) throw Object.assign(new Error('Paystack subscription plan codes are not configured.'), { statusCode: 503 })
-  return { secretKey, planCodes }
+  if (!plans.monthly || !plans.annual) throw Object.assign(new Error('Paystack subscription plan codes are not configured.'), { statusCode: 503 })
+  return { secretKey, plans }
 }
 
 async function paystackRequest(path, body) {
@@ -27,11 +27,10 @@ export default async function handler(req, res) {
   try {
     requireMethod(req, ['POST'])
     const user = await requireUser(req)
-    const { planCode } = await readJson(req)
-    if (!planCode) throw Object.assign(new Error('planCode is required.'), { statusCode: 400 })
-
-    const { planCodes } = getPaystackConfig()
-    if (!planCodes.includes(planCode)) throw Object.assign(new Error('Invalid subscription plan.'), { statusCode: 400 })
+    const { plan } = await readJson(req)
+    const { plans } = getPaystackConfig()
+    const planCode = plan === 'monthly' ? plans.monthly : plan === 'annual' ? plans.annual : null
+    if (!planCode) throw Object.assign(new Error('Invalid subscription plan.'), { statusCode: 400 })
 
     const origin = `https://${req.headers.host}`
     const transaction = await paystackRequest('/transaction/initialize', {
