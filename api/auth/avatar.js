@@ -4,7 +4,7 @@ import { requireUser, publicUser } from '../_lib/auth.js'
 import { ensureSchema, getSql } from '../_lib/db.js'
 import { requireMethod, sendError, sendJson } from '../_lib/http.js'
 
-const MAX_SIZE = 5 * 1024 * 1024
+const MAX_SIZE = 4 * 1024 * 1024
 const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
 
 function hasValidImageSignature(buffer, contentType) {
@@ -70,7 +70,7 @@ export default async function handler(req, res) {
     const contentLength = Number(req.headers['content-length'] || 0)
 
     if (contentLength > MAX_SIZE) {
-      throw Object.assign(new Error('Image must be 5 MB or smaller after compression.'), { statusCode: 400 })
+      throw Object.assign(new Error('Image must be 4 MB or smaller after compression.'), { statusCode: 400 })
     }
 
     const chunks = []
@@ -80,7 +80,7 @@ export default async function handler(req, res) {
       totalSize += chunk.length
 
       if (totalSize > MAX_SIZE) {
-        throw Object.assign(new Error('Image must be 5 MB or smaller after compression.'), { statusCode: 400 })
+        throw Object.assign(new Error('Image must be 4 MB or smaller after compression.'), { statusCode: 400 })
       }
 
       chunks.push(chunk)

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { deleteAvatar, uploadAvatar } from '../services/profileService.js'
 import Avatar from './Avatar.jsx'
 
-const MAX_SIZE = 5 * 1024 * 1024
+const MAX_SIZE = 4 * 1024 * 1024
 const MAX_SOURCE_SIZE = 25 * 1024 * 1024
 
 function canvasBlob(canvas, quality) {
@@ -11,7 +11,7 @@ function canvasBlob(canvas, quality) {
 
 async function compressAvatar(file) {
   if (file.size <= MAX_SIZE) return file
-  if (file.type === 'image/gif') throw new Error('GIF images over 5 MB cannot be compressed. Choose a JPEG, PNG, or WebP image.')
+  if (file.type === 'image/gif') throw new Error('GIF images over 4 MB cannot be compressed. Choose a JPEG, PNG, or WebP image.')
   if (file.size > MAX_SOURCE_SIZE) throw new Error('Choose an image smaller than 25 MB.')
 
   const image = await createImageBitmap(file)
@@ -31,7 +31,7 @@ async function compressAvatar(file) {
     quality = Math.max(0.5, quality - 0.08)
   }
 
-  throw new Error('We could not compress this image below 5 MB. Choose a smaller image.')
+  throw new Error('We could not compress this image below 4 MB. Choose a smaller image.')
 }
 
 function AvatarUpload({ user, onUpdated }) {
