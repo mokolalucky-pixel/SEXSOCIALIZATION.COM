@@ -18,6 +18,11 @@ async function paystackRequest(path, body) {
   })
   const result = await response.json().catch(() => ({}))
   if (!response.ok || !result.status) {
+    console.error('Paystack checkout initialization failed', {
+      status: response.status,
+      message: typeof result.message === 'string' ? result.message : 'Payment request failed.',
+      code: typeof result.code === 'string' ? result.code : null,
+    })
     throw Object.assign(new Error(result.message || 'Payment request failed.'), { statusCode: response.status >= 500 ? 502 : 400 })
   }
   return result.data
