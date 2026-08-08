@@ -34,13 +34,14 @@ export default async function handler(req, res) {
     const user = await requireUser(req)
     const { plan } = await readJson(req)
     const { plans } = getPaystackConfig()
-    const planCode = plan === 'monthly' ? plans.monthly : plan === 'annual' ? plans.annual : null
-    if (!planCode) throw Object.assign(new Error('Invalid subscription plan.'), { statusCode: 400 })
+    const selectedPlan = plan === 'monthly' ? { code: plans.monthly, amount: 9900 } : plan === 'annual' ? { code: plans.annual, amount: 99000 } : null
+    if (!selectedPlan) throw Object.assign(new Error('Invalid subscription plan.'), { statusCode: 400 })
 
     const origin = `https://${req.headers.host}`
     const transaction = await paystackRequest('/transaction/initialize', {
       email: user.email,
-      plan: planCode,
+      plan: selectedPlan.code,
+      amount: selectedPlan.amount,
       callback_url: `${origin}/dashboard?payment=success`,
       metadata: { user_id: user.id, user_email: user.email },
     })
