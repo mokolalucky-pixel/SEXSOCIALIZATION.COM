@@ -7,6 +7,14 @@ import { requireMethod, sendError, sendJson } from '../_lib/http.js'
 const MAX_SIZE = 5 * 1024 * 1024
 const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
 
+function hasValidImageSignature(buffer, contentType) {
+  if (contentType === 'image/jpeg') return buffer.length >= 3 && buffer.subarray(0, 3).equals(Buffer.from([0xff, 0xd8, 0xff]))
+  if (contentType === 'image/png') return buffer.length >= 8 && buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))
+  if (contentType === 'image/gif') return buffer.length >= 6 && (buffer.subarray(0, 6).equals(Buffer.from('GIF87a')) || buffer.subarray(0, 6).equals(Buffer.from('GIF89a')))
+  if (contentType === 'image/webp') return buffer.length >= 12 && buffer.subarray(0, 4).equals(Buffer.from('RIFF')) && buffer.subarray(8, 12).equals(Buffer.from('WEBP'))
+  return false
+}
+
 export const config = {
   api: { bodyParser: false },
 }
@@ -79,6 +87,11 @@ export default async function handler(req, res) {
     }
 
     const buffer = Buffer.concat(chunks)
+
+    if (!hasValidImageSignature(buffer, contentType)) {
+      throw Object.assign(new Error('Uploaded file does not match the selected image type.'), { statusCode: 400 })
+    }
+
     const extension = contentType.split('/')[1] === 'jpeg' ? 'jpg' : contentType.split('/')[1]
     const filename = `avatars/${user.id}.${extension}`
 
