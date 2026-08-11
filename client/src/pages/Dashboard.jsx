@@ -16,7 +16,6 @@ import MessagingPanel from '../components/MessagingPanel.jsx'
 import CallPanel from '../components/CallPanel.jsx'
 import ModerationPanel from '../components/ModerationPanel.jsx'
 import CirclesPanel from '../components/CirclesPanel.jsx'
-import SubscriptionPanel from '../components/SubscriptionPanel.jsx'
 import PayoutPanel from '../components/PayoutPanel.jsx'
 import ReferralPanel from '../components/ReferralPanel.jsx'
 import SeparationPanel from '../components/SeparationPanel.jsx'
@@ -266,7 +265,6 @@ function Dashboard() {
         </div>
       </section>
 
-      <SubscriptionPanel />
       <PayoutPanel />
       <ReferralPanel />
       <CirclesPanel />
