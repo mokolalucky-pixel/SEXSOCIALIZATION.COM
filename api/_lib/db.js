@@ -50,6 +50,8 @@ export async function ensureSchema() {
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS payout_account_number TEXT`
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS payout_branch_code TEXT`
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS payout_account_type TEXT`
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS payout_account_number_encrypted TEXT`
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS payout_branch_code_encrypted TEXT`
 
       await db`CREATE TABLE IF NOT EXISTS deleted_account_holds (
         email TEXT PRIMARY KEY,
@@ -286,6 +288,40 @@ export async function ensureSchema() {
 
       await db`CREATE INDEX IF NOT EXISTS payout_requests_status_idx
         ON payout_requests (status, created_at DESC)`
+
+      await db`CREATE TABLE IF NOT EXISTS policy_acceptances (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        terms_version TEXT NOT NULL,
+        privacy_version TEXT NOT NULL,
+        accepted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`
+
+      await db`CREATE INDEX IF NOT EXISTS policy_acceptances_user_created_idx
+        ON policy_acceptances (user_id, accepted_at DESC)`
+
+      await db`CREATE TABLE IF NOT EXISTS privacy_requests (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        request_type TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'open',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        completed_at TIMESTAMPTZ
+      )`
+
+      await db`CREATE INDEX IF NOT EXISTS privacy_requests_user_created_idx
+        ON privacy_requests (user_id, created_at DESC)`
+
+      await db`CREATE TABLE IF NOT EXISTS compliance_audit_events (
+        id TEXT PRIMARY KEY,
+        user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+        event_type TEXT NOT NULL,
+        metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`
+
+      await db`CREATE INDEX IF NOT EXISTS compliance_audit_events_user_created_idx
+        ON compliance_audit_events (user_id, created_at DESC)`
 
       // Admin-configured payout settings (single-row config table)
       await db`DO $$ BEGIN

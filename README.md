@@ -88,6 +88,7 @@ In the Vercel project settings → **Environment Variables**, add:
 | ---- | ----- |
 | `DATABASE_URL` | Neon Postgres connection string |
 | `SESSION_SECRET` | Long random string used to sign session tokens |
+| `PAYOUT_ENCRYPTION_KEY` | 32-byte base64url key used to encrypt payout account and branch numbers |
 | `ADMIN_EMAILS` | Comma-separated admin account emails for moderation review |
 | `VIDEO_PROVIDER_JOIN_URL` | Optional WebRTC provider join URL used when call rooms become live |
 | `TWILIO_ACCOUNT_SID` | Twilio Account SID used for server-side SMS sending |
@@ -127,7 +128,10 @@ The app now has backend auth and database-backed agreement drafts. Remaining pro
 - [ ] End-to-end encryption for message payloads
 - [ ] Live video provider integration (LiveKit, Daily.co, Twilio, etc.)
 - [ ] Automated tests (Vitest + React Testing Library recommended)
-- [ ] Privacy Policy and Terms of Service pages (required for adult platforms)
+- [x] Privacy Policy and Terms of Service pages
+- [x] Versioned policy acceptance and privacy-request workflow
+- [x] Encrypted payout account-number storage (requires `PAYOUT_ENCRYPTION_KEY`)
+- [ ] Lawyer-approved jurisdiction-specific policies and retention schedule
 - [x] Social preview asset for OG/Twitter card rendering
 
 ## South Africa Payout Setup

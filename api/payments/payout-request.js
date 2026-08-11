@@ -12,10 +12,10 @@ export default async function handler(req, res) {
     const user = await requireUser(req)
     await ensureSchema(); const db = getSql()
     const [account] = await db`
-      SELECT subscription_status, earnings_balance, payout_bank_name, payout_account_holder, payout_account_number, payout_account_type
+      SELECT subscription_status, earnings_balance, payout_bank_name, payout_account_holder, payout_account_number, payout_account_number_encrypted, payout_account_type
       FROM users WHERE id = ${user.id}`
     requirePremium(account)
-    if (!account?.payout_bank_name || !account?.payout_account_number) throw Object.assign(new Error('Add your payout banking details before requesting a payout.'), { statusCode: 400 })
+    if (!account?.payout_bank_name || (!account?.payout_account_number_encrypted && !account?.payout_account_number)) throw Object.assign(new Error('Add your payout banking details before requesting a payout.'), { statusCode: 400 })
     const balance = Number(account.earnings_balance || 0)
     if (balance < MINIMUM_PAYOUT_ZAR) throw Object.assign(new Error(`Minimum payout is R${MINIMUM_PAYOUT_ZAR}.`), { statusCode: 400 })
     const [existing] = await db`SELECT id FROM payout_requests WHERE user_id = ${user.id} AND status = 'pending' LIMIT 1`

@@ -16,6 +16,7 @@ function SignUp() {
     region: '',
     password: '',
     confirmPassword: '',
+    acceptedTerms: false,
   })
   const [verificationState, setVerificationState] = useState({
     userId: '',
@@ -45,6 +46,11 @@ function SignUp() {
       return
     }
 
+    if (!formState.acceptedTerms) {
+      setError('Accept the Terms of Service and Privacy Policy to create an account.')
+      return
+    }
+
     if (formState.password !== formState.confirmPassword) {
       setError('Password and confirmation do not match.')
       return
@@ -60,6 +66,9 @@ function SignUp() {
         gender: formState.gender,
         region: formState.region,
         referralToken: searchParams.get('ref') || undefined,
+        acceptedTerms: formState.acceptedTerms,
+        termsVersion: '2026-07-15',
+        privacyVersion: '2026-07-15',
       })
 
       setVerificationState({
@@ -224,6 +233,11 @@ function SignUp() {
           onChange={(event) => setFormState((prev) => ({ ...prev, confirmPassword: event.target.value }))}
           required
         />
+
+        <label className="policy-consent" htmlFor="signup-policy-consent">
+          <input id="signup-policy-consent" type="checkbox" checked={formState.acceptedTerms} onChange={(event) => setFormState((prev) => ({ ...prev, acceptedTerms: event.target.checked }))} required />
+          <span>I am at least 18 and agree to the <Link to="/terms" target="_blank" rel="noopener noreferrer">Terms of Service</Link> and <Link to="/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</Link>.</span>
+        </label>
 
         {error ? <p className="error-message" role="alert">{error}</p> : null}
 

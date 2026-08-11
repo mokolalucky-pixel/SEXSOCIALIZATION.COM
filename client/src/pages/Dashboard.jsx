@@ -20,6 +20,7 @@ import SubscriptionPanel from '../components/SubscriptionPanel.jsx'
 import PayoutPanel from '../components/PayoutPanel.jsx'
 import ReferralPanel from '../components/ReferralPanel.jsx'
 import SeparationPanel from '../components/SeparationPanel.jsx'
+import PrivacyRequestsPanel from '../components/PrivacyRequestsPanel.jsx'
 import AdminPayoutPanel from '../components/AdminPayoutPanel.jsx'
 import AdminPayoutSetupPanel from '../components/AdminPayoutSetupPanel.jsx'
 import AvatarUpload from '../components/AvatarUpload.jsx'
@@ -271,6 +272,7 @@ function Dashboard() {
       <CirclesPanel />
       <MessagingPanel />
       <CallPanel />
+      <PrivacyRequestsPanel />
       <SeparationPanel />
       <ModerationPanel isAdmin={user?.isAdmin} />
       <AdminPayoutSetupPanel isAdmin={user?.isAdmin} />

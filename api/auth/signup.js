@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
 import { createUserRecord, emailPattern, normalizeEmail, publicUser } from '../_lib/auth.js'
 import { ensureSchema, getSql } from '../_lib/db.js'
 import { sendVerificationEmail } from '../_lib/email.js'
@@ -10,7 +10,11 @@ export default async function handler(req, res) {
     requireMethod(req, ['POST'])
     await ensureSchema()
 
-    const { email: rawEmail, name, password, gender: rawGender, region: rawRegion, referralToken } = await readJson(req)
+    const { email: rawEmail, name, password, gender: rawGender, region: rawRegion, referralToken, acceptedTerms, termsVersion, privacyVersion } = await readJson(req)
+    if (acceptedTerms !== true || termsVersion !== '2026-07-15' || privacyVersion !== '2026-07-15') {
+      throw Object.assign(new Error('You must accept the current Terms of Service and Privacy Policy.'), { statusCode: 400 })
+    }
+
     const email = normalizeEmail(rawEmail)
     const displayName = String(name || '').trim()
 
@@ -51,6 +55,11 @@ export default async function handler(req, res) {
 
       throw error
     }
+
+    await getSql()`INSERT INTO policy_acceptances (id, user_id, terms_version, privacy_version)
+      VALUES (${randomUUID()}, ${userRecord.id}, ${termsVersion}, ${privacyVersion})`
+    await getSql()`INSERT INTO compliance_audit_events (id, user_id, event_type, metadata)
+      VALUES (${randomUUID()}, ${userRecord.id}, 'policy_accepted', ${JSON.stringify({ termsVersion, privacyVersion })}::jsonb)`
 
     const code = await createVerificationRecord(userRecord.id)
     const emailResult = await sendVerificationEmail(email, code)

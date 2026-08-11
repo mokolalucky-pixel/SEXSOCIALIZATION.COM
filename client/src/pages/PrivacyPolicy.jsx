@@ -43,6 +43,9 @@ function PrivacyPolicy() {
         <li>
           <strong>Avatar image</strong> — stored on Vercel Blob (CDN-backed file storage).
         </li>
+        <li>
+          <strong>Payout details</strong> — bank name, account-holder name, account type, and encrypted account and branch numbers when you configure manual payouts.
+        </li>
       </ul>
 
       <h3>1.3 User-generated content</h3>
@@ -129,7 +132,10 @@ function PrivacyPolicy() {
         </li>
         <li>
           <strong>Account data</strong> (profile, messages, agreements) is retained until you
-          request deletion.
+          request deletion, subject to applicable legal, security, and financial recordkeeping obligations.
+        </li>
+        <li>
+          <strong>Privacy requests</strong> are retained only as needed to verify, fulfill, and document the request.
         </li>
       </ul>
 
@@ -158,7 +164,7 @@ function PrivacyPolicy() {
           <strong>Correct</strong> your data — update your display name, gender, region, or avatar.
         </li>
         <li>
-          <strong>Delete</strong> your data — request account deletion by contacting us.
+          <strong>Delete</strong> your data — submit an authenticated deletion request in the dashboard or contact us.
         </li>
         <li>
           <strong>Withdraw consent</strong> — remove any accepted boundary item at any time, leave
