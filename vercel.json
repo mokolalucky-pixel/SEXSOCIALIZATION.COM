@@ -39,5 +39,5 @@
       ]
     }
   ],
-  "installCommand": "npm install && npm --prefix client install"
+  "installCommand": "npm ci && npm --prefix client ci"
 }
