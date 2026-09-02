@@ -90,6 +90,9 @@ In the Vercel project settings → **Environment Variables**, add:
 | `SESSION_SECRET` | Long random string used to sign session tokens |
 | `PAYOUT_ENCRYPTION_KEY` | 32-byte base64url key used to encrypt payout account and branch numbers |
 | `ADMIN_EMAILS` | Comma-separated admin account emails for moderation review |
+| `RESEND_API_KEY` | Optional Resend API key used for transactional email |
+| `EMAIL_FROM` | Optional verified sender address for transactional email |
+| `DAILY_API_KEY` | Daily API key used to create call rooms |
 | `VIDEO_PROVIDER_JOIN_URL` | Optional WebRTC provider join URL used when call rooms become live |
 | `TWILIO_ACCOUNT_SID` | Twilio Account SID used for server-side SMS sending |
 | `TWILIO_AUTH_TOKEN` | Twilio Auth Token used only by Vercel Functions |
