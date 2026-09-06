@@ -1,6 +1,6 @@
 # SEXSOCIALIZATION.COM — Legal Policy Pack (Consolidated)
 
-**Version:** Draft v1.1  
+**Version:** Draft v1.2  
 **Last Updated:** 2026-09-06  
 **Jurisdiction Focus:** South Africa (POPIA, CPA, ECTA)  
 **Status:** Draft pending attorney review and final company details
@@ -56,8 +56,11 @@ South Africa
 Contact: privacy@sexsocialization.com
 
 ### 3.2 Information Officer
-**[Information Officer Name Placeholder]**  
-To be registered/confirmed with the SA Information Regulator.
+**Mokola Lucky Shai**  
+Title: Director  
+Email: mokolalucky@gmail.com  
+Phone: 072 882 6249  
+Status: To be registered/confirmed with the SA Information Regulator.
 
 ### 3.3 Personal Information Collected
 
@@ -132,6 +135,7 @@ Data subjects may request:
 
 Complaint channel:
 - complaints.IR@justice.gov.za
+- Direct contact: mokolalucky@gmail.com or 072 882 6249
 
 ### 3.10 Breach Notification
 Target process: notify Regulator and affected users within 72 hours of qualifying confirmed incidents.
@@ -298,7 +302,7 @@ Attorney to confirm and finalize visible disclosures including:
 - Full legal entity name: **BA MABULANE (PTY) LTD**
 - Registration number: **2026 / 258617 / 07**
 - Physical address: **GA Mokgotho, N201, Burgersfort, Limpopo, 1160, South Africa**
-- Contact channels: privacy@sexsocialization.com
+- Contact channels: privacy@sexsocialization.com | mokolalucky@gmail.com | 072 882 6249
 - Material terms and cancellation rights
 - Pricing and billing transparency
 - Complaint process and regulator contact references where required
@@ -307,7 +311,7 @@ Attorney to confirm and finalize visible disclosures including:
 
 ## 10) Lawyer Completion Checklist
 
-1. Register Information Officer with SA Information Regulator  
+1. ~~Register Information Officer with SA Information Regulator~~ ✓ **Details provided** (Pending formal registration)
 2. Finalize POPIA + PAIA manual and governance documents  
 3. ~~Insert legal entity and registration details across all policies~~ ✓ **COMPLETE**
 4. Finalize/execute DPAs with Neon, Vercel, Ozow, Paystack  
@@ -321,8 +325,7 @@ Attorney to confirm and finalize visible disclosures including:
 ## 11) Publishing & Version Control Notes
 
 Before publishing:
-- ~~Replace all placeholders (Information Officer name, legal entity details, provider selection)~~ ✓ **Legal entity details added**
-- Information Officer name still pending
+- ~~Replace all placeholders (Information Officer name, legal entity details)~~ ✓ **All added**
 - Provider selection (age-verification vendor) still pending
 - Confirm all legal references and section citations
 - Align product UI consent text with policy wording exactly
@@ -338,11 +341,11 @@ Recommended metadata:
 
 ## 12) Contact
 
-**Primary legal/privacy contact:** privacy@sexsocialization.com  
+**Primary legal/privacy contact:** mokolalucky@gmail.com | 072 882 6249  
 **Company legal entity:** BA MABULANE (PTY) LTD  
 **CIPC Registration:** 2026 / 258617 / 07  
 **Registered Office:** GA Mokgotho, N201, Burgersfort, Limpopo, 1160, South Africa  
-**Director:** Shai Mokola
+**Director & Information Officer:** Mokola Lucky Shai
 
 ---
 **End of consolidated draft**
