@@ -50,6 +50,7 @@ Final wording, legal basis, and enforceability must be confirmed by a qualified 
 ### 3.1 Responsible Party
 **BA MABULANE (PTY) LTD**  
 Registration Number: 2026 / 258617 / 07  
+Tax Number / SARS Taxpayer Reference Number: 9606264225  
 GA Mokgotho, N201  
 Burgersfort, Limpopo, 1160  
 South Africa  
@@ -301,6 +302,7 @@ Where data flows outside SA, apply POPIA Sec 72 safeguards and document transfer
 Attorney to confirm and finalize visible disclosures including:
 - Full legal entity name: **BA MABULANE (PTY) LTD**
 - Registration number: **2026 / 258617 / 07**
+- Tax Number / SARS Taxpayer Reference Number: **9606264225**
 - Physical address: **GA Mokgotho, N201, Burgersfort, Limpopo, 1160, South Africa**
 - Contact channels: privacy@sexsocialization.com | mokolalucky@gmail.com | 072 882 6249
 - Material terms and cancellation rights
@@ -344,6 +346,7 @@ Recommended metadata:
 **Primary legal/privacy contact:** mokolalucky@gmail.com | 072 882 6249  
 **Company legal entity:** BA MABULANE (PTY) LTD  
 **CIPC Registration:** 2026 / 258617 / 07  
+**Tax Number / SARS Taxpayer Reference Number:** 9606264225  
 **Registered Office:** GA Mokgotho, N201, Burgersfort, Limpopo, 1160, South Africa  
 **Director & Information Officer:** Mokola Lucky Shai
 
