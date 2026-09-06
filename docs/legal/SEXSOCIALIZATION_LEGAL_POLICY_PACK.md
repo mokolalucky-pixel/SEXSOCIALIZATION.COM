@@ -1,47 +1,46 @@
 # SEXSOCIALIZATION.COM — Legal Policy Pack (Consolidated)
 
-**Version:** Draft v1.2  
+**Version:** Draft v1.3  
 **Last Updated:** 2026-09-06  
-**Jurisdiction Focus:** South Africa (POPIA, CPA, ECTA)  
-**Status:** Draft pending attorney review and final company details
+**Jurisdiction Focus:** Republic of South Africa (Protection of Personal Information Act, 2013 ("POPIA"); Consumer Protection Act, 2008 ("CPA"); Electronic Communications and Transactions Act, 2002 ("ECTA"))  
+**Status:** Draft pending attorney review and finalization of company details
 
 ---
 
 ## Important Notice
 
-This document is a consolidated operational draft and **not legal advice**.  
-Final wording, legal basis, and enforceability must be confirmed by a qualified South African attorney before production use.
+This document constitutes a consolidated operational draft prepared for internal planning purposes and **does not constitute legal advice**. The final wording, legal basis, and enforceability of each provision contained herein must be reviewed and confirmed by a qualified South African attorney prior to production use or public publication. No provision of this draft shall be relied upon as a substitute for professional legal counsel.
 
 ---
 
 ## 1) Business Model Summary
 
-- Platform model: Couple-based intimacy communication app (**2 persons per account**)
-- No singles, no swapping, no third parties
-- 18+ only with **dual SA ID + selfie verification** (Partner A and Partner B separately)
+- Platform model: a couple-based intimacy communication application (**two (2) persons per account**)
+- The platform does not accommodate single users, partner-swapping arrangements, or third-party participation
+- Access is restricted to persons eighteen (18) years of age or older, subject to **dual South African identity document ("SA ID") and selfie verification**, completed separately by Partner A and Partner B
 - Freemium structure:
   - Free basic tier
-  - Premium Monthly: **R99**
-  - Premium Annual: **R999**
-  - Shared premium: one partner pays, both partners get premium
-- Referral model:
-  - 25% commission
+  - Premium Monthly subscription: **R99**
+  - Premium Annual subscription: **R999**
+  - Shared premium: where one partner effects payment, both partners receive premium access
+- Referral program:
+  - 25% commission rate
   - Monthly reference commission: **R24.75**
   - Annual reference commission: **R249.75**
-  - Minimum payout: **R250**
-  - 14-day qualification/cooling window before commission unlock
-- Payments: **Ozow EFT** and **Paystack (Card/EFT)**
-- Sensitive data category: sexual-life data treated as **Special Personal Information** (POPIA Sec 26), requiring explicit consent
+  - Minimum payout threshold: **R250**
+  - A fourteen (14) day qualification/cooling-off window applies prior to commission unlock
+- Payment processors: **Ozow (EFT)** and **Paystack (Card/EFT)**
+- Sensitive data category: data concerning an individual's sexual life is treated as **Special Personal Information** pursuant to section 26 of POPIA and requires explicit consent
 
 ---
 
-## 2) Mandatory Legal Validation Items (Attorney)
+## 2) Mandatory Legal Validation Items (For Attorney Review)
 
-1. Confirm POPIA Section 26 explicit consent flow and records
-2. Confirm age/FICA verification provider lawfulness (e.g., ThisIsMe / LexisNexis / Smile ID)
-3. Confirm referral model is not a pyramid or prohibited arrangement under CPA Section 43
-4. Confirm auto-renewal and cancellation model compliance under CPA Section 14
-5. Confirm ECTA Section 43 required supplier disclosures and checkout information set
+1. Confirm the lawfulness and adequacy of the explicit consent flow and consent records required under section 26 of POPIA
+2. Confirm the lawfulness of the age/FICA verification provider (e.g., ThisIsMe, LexisNexis, or Smile ID)
+3. Confirm that the referral model does not constitute a pyramid scheme or otherwise prohibited arrangement under section 43 of the CPA
+4. Confirm that the auto-renewal and cancellation model complies with section 14 of the CPA
+5. Confirm the supplier disclosures and checkout information required under section 43 of ECTA
 
 ---
 
@@ -54,301 +53,302 @@ Tax Number / SARS Taxpayer Reference Number: 9606264225
 GA Mokgotho, N201  
 Burgersfort, Limpopo, 1160  
 South Africa  
-Contact: privacy@sexsocialization.com
+Contact: privacy@sexsocialization.com (this mailbox is actively monitored)
 
 ### 3.2 Information Officer
 **Mokola Lucky Shai**  
 Title: Director  
 Email: mokolalucky@gmail.com  
-Phone: 072 882 6249  
-Status: To be registered/confirmed with the SA Information Regulator.
+Telephone: 072 882 6249  
+Status: Registration with the Information Regulator of South Africa to be completed/confirmed.
 
-### 3.3 Personal Information Collected
+### 3.3 Categories of Personal Information Collected
 
 **Partner A**
-- Email
+- Email address
 - Password hash
 - SA ID number
-- Selfie
-- Liveness data
-- Consent timestamp/IP/version data
+- Selfie photograph
+- Liveness verification data
+- Consent timestamp, IP address, and consent-text version data
 
 **Partner B**
-- Email
+- Email address
 - SA ID number
-- Selfie
+- Selfie photograph
 - Separate consent records
 
 **Couple Account**
-- Couple ID
+- Couple identifier
 - Account/couple status
-- Premium status
+- Premium subscription status
 
-**Technical**
+**Technical Data**
 - IP address
 - Device metadata
 - Session cookies
 
-### 3.4 Special Personal Information (POPIA Sec 26)
-Sexual-life data is processed only when **both partners** separately opt in using explicit consent controls (e.g., optional feature checkbox for Men's/Women's/Mixed circles).
+### 3.4 Special Personal Information (Section 26 of POPIA)
+Data concerning sexual life is processed only where **both partners** have separately provided explicit, opt-in consent through dedicated consent controls (for example, an optional feature checkbox governing Men's, Women's, or Mixed circles).
 
-Consent logs must capture:
+Consent records must capture:
 - Timestamp
-- IP
-- Consent text version
+- IP address
+- Version of the consent text presented
 
-Withdrawal:
-- Either partner may withdraw consent
-- Sexual-feature processing stops
-- Account is downgraded to non-sexual feature set
-- Sexual data deletion workflow applies (target: within 7 days unless legal hold)
+Withdrawal of consent:
+- Either partner may withdraw consent at any time
+- Processing of sexual-feature data ceases upon withdrawal
+- The account is downgraded to the non-sexual feature set
+- The sexual-data deletion process applies, targeting deletion within seven (7) days, unless a legal hold applies
 
 ### 3.5 Purpose of Processing
-- 18+ verification
-- Couple-authentication (exactly two-person structure)
-- Platform communication/intimacy features
-- Payment processing
+- Verification that users are 18 years of age or older
+- Authentication of the couple structure (confirming exactly two persons per account)
+- Provision of platform communication and intimacy features
+- Processing of payments
 - Referral attribution and fraud prevention
 
-### 3.6 Lawful Basis
-- Consent (POPIA Sec 11)
-- Contractual necessity (service delivery and transaction execution)
-- Legitimate interests (fraud and abuse prevention)
+### 3.6 Lawful Basis for Processing
+- Consent (section 11 of POPIA)
+- Necessity for the performance of a contract (service delivery and transaction execution)
+- Legitimate interests (prevention of fraud and abuse)
 
-### 3.7 Retention
-- ID verification artifacts: delete after verification unless legal retention required
-- Sexual data: delete within 7 days post withdrawal request
-- Financial/tax records: retain 5 years (or longer if legally required)
+### 3.7 Retention Periods
+- Identity-verification artifacts: deleted following completion of verification, unless legally required to be retained
+- Sexual-life data: deleted within seven (7) days following a withdrawal request
+- Financial and tax records: retained for five (5) years, or such longer period as may be required by law
 
 ### 3.8 Cross-Border Transfers
-Processing/storage may involve:
-- Neon (US/EU)
-- Vercel (US)
+Processing and storage of personal information may occur through the following service providers:
+- Neon (United States/European Union)
+- Vercel (United States)
 
-Transfers rely on POPIA Sec 72 mechanisms and explicit user disclosure/consent where required.
+Any such transfer is undertaken in reliance on the mechanisms set out in section 72 of POPIA, together with explicit disclosure to, and consent from, the data subject where required.
 
 ### 3.9 Data Subject Rights
-Data subjects may request:
-- Access
-- Correction
-- Deletion (where lawful)
-- Objection/restriction (where lawful)
+Data subjects are entitled to request:
+- Access to their personal information
+- Correction of their personal information
+- Deletion of their personal information, where lawful
+- Objection to, or restriction of, processing, where lawful
 
-Complaint channel:
-- complaints.IR@justice.gov.za
-- Direct contact: mokolalucky@gmail.com or 072 882 6249
+Complaints may be directed to:
+- The Information Regulator: complaints.IR@justice.gov.za
+- The Company directly: mokolalucky@gmail.com or 072 882 6249
 
 ### 3.10 Breach Notification
-Target process: notify Regulator and affected users within 72 hours of qualifying confirmed incidents.
+The Company's target process is to notify the Information Regulator and affected data subjects within seventy-two (72) hours of confirming a qualifying security compromise.
 
 ---
 
-## 4) Terms of Service (ECTA + CPA-Oriented Draft)
+## 4) Terms of Service (ECTA and CPA-Oriented Draft)
 
 ### 4.1 Eligibility
-- Both partners must be 18+
-- Both must complete SA ID verification
-- Account must represent a committed two-person couple model
+- Both partners must be at least 18 years of age
+- Both partners must complete SA ID verification
+- The account must represent a committed, two-person couple relationship
 
-False age/fraudulent access may lead to termination and reporting where required by law.
+Misrepresentation of age or fraudulent access to the platform may result in termination of the account and, where required by law, referral to the relevant authorities.
 
-### 4.2 Account Type
-- One Couple Account = 2 linked user IDs
-- Not transferable
-- No third-party access rights
+### 4.2 Account Structure
+- One Couple Account comprises two (2) linked user identifiers
+- Accounts are not transferable
+- No third party may be granted access rights to an account
 
 ### 4.3 Prohibited Conduct
-- Minors
+The following conduct is prohibited:
+- Access by, or on behalf of, minors
 - Non-consensual content
-- Sex work solicitation
-- Login sharing
-- Third-party/singles/swap usage patterns
-- Illegal content/abuse
+- Solicitation of sex work
+- Sharing of login credentials
+- Use of the platform by single users, or for partner-swapping or third-party arrangements
+- Illegal content or abusive conduct
 
 ### 4.4 Dual Consent Architecture
-- Separate login per partner
-- Separate age verification per partner
-- Separate POPIA consent per partner
-- One partner cannot consent on behalf of the other
+- Each partner maintains a separate login
+- Each partner completes separate age verification
+- Each partner provides separate consent under POPIA
+- Neither partner may provide consent on behalf of the other
 
 ### 4.5 Termination and Deletion
-- Either partner may request deletion
-- Account may be frozen for up to 30 days before permanent deletion
-- Legal retention exceptions apply
+- Either partner may request deletion of the account
+- The account may be frozen for a period of up to thirty (30) days prior to permanent deletion
+- Exceptions for legally mandated retention apply
 
-### 4.6 Platform Nature Disclaimer
-This is a communication and relationship support platform.  
-**It is not a pornography-hosting platform and explicit-content hosting is not permitted.**
+### 4.6 Nature of the Platform
+This platform is a communication and relationship-support service. **It is not a pornography-hosting platform, and the hosting of explicit content is not permitted.**
 
 ---
 
-## 5) Subscription Terms (CPA Sec 14 + ECTA Sec 44 Considerations)
+## 5) Subscription Terms (Section 14 of the CPA and Section 44 of ECTA)
 
-### 5.1 Plans
-- Free
-- Premium Monthly: **R99 incl. VAT**
-- Premium Annual: **R999 incl. VAT** (approx. 16% savings vs monthly)
+### 5.1 Subscription Plans
+- Free tier
+- Premium Monthly: **R99, inclusive of VAT**
+- Premium Annual: **R999, inclusive of VAT** (representing an approximate saving of 16% relative to the monthly plan)
 
-### 5.2 Shared Premium
-If one partner pays, both linked users receive premium access until the same expiry date.
+### 5.2 Shared Premium Access
+Where one partner effects payment, both linked users receive premium access until the same expiry date.
 
 ### 5.3 Billing
-- Processors: Ozow and Paystack
-- Auto-renewal enabled
-- 5-day renewal reminder target
-- Cancel anytime via dashboard
-- Cancellation takes effect at end of current paid period
+- Payment processors: Ozow and Paystack
+- Auto-renewal is enabled by default
+- A renewal reminder is targeted to be sent five (5) days prior to renewal
+- Subscribers may cancel at any time via the account dashboard
+- Cancellation takes effect at the end of the then-current paid billing period
 
-### 5.4 Cooling-Off
-ECTA Sec 44 cooling-off (target: 5 business days) with refund handling subject to feature usage and statutory exceptions.
+### 5.4 Cooling-Off Period
+A cooling-off period pursuant to section 44 of ECTA (targeted at five (5) business days) applies, with refunds subject to the extent of feature usage and any applicable statutory exceptions.
 
-### 5.5 Price Increase Notice
-Target notice period: at least 40 business days before new pricing takes effect.
+### 5.5 Notice of Price Increases
+The Company's target is to provide notice of any pricing increase at least forty (40) business days before the revised pricing takes effect.
 
 ---
 
-## 6) Referral Terms (CPA Section 43 Safeguard Draft)
+## 6) Referral Terms (Section 43 of the CPA — Safeguard Draft)
 
 ### 6.1 Program Definition
-- Single-level affiliate referral
-- Not MLM
-- No recruitment/downline tiers
+- A single-level affiliate referral program
+- Not a multi-level marketing ("MLM") scheme
+- No recruitment of, or commission based upon, downline tiers
 
-### 6.2 Commission
-- 25% of qualifying net payment (final tax/VAT treatment to be attorney/accountant confirmed)
-- Monthly reference: **R24.75**
-- Annual reference: **R249.75**
+### 6.2 Commission Structure
+- 25% of the qualifying net payment (final tax/VAT treatment to be confirmed by attorney and accountant)
+- Monthly reference commission: **R24.75**
+- Annual reference commission: **R249.75**
 
-### 6.3 Tracking
-- `?ref=CODE`
-- 30-day local attribution storage
-- Last-click wins
+### 6.3 Attribution Tracking
+- Tracked via the `?ref=CODE` parameter
+- Attribution is stored locally for thirty (30) days
+- The last-click attribution model applies
 
-### 6.4 Qualification
-Referral qualifies only when:
-1. Both partner verifications completed
-2. Couple subscribes to premium
-3. Premium remains active at least 14 days (anti-fraud/chargeback window)
+### 6.4 Qualification Requirements
+A referral qualifies for commission only where:
+1. Both partners have completed verification
+2. The couple has subscribed to a premium plan
+3. The premium subscription has remained active for at least fourteen (14) days (an anti-fraud/chargeback window)
 
 ### 6.5 Payout
 - Minimum payout threshold: **R250**
-- EFT payout within 30 days of valid request
-- Enhanced KYC/FICA checks may apply on high-value payouts (e.g., >R5000)
+- EFT payout is processed within thirty (30) days of a valid request
+- Enhanced KYC/FICA checks may apply to high-value payouts (for example, payouts exceeding R5,000)
 
-### 6.6 Tax
-Potential withholding (example reference: 10%) where applicable; referrer remains responsible for declarations and personal compliance.
+### 6.6 Taxation
+Withholding may apply (illustrative reference rate: 10%) where required; the referrer remains solely responsible for their own tax declarations and personal compliance obligations.
 
-### 6.7 Prohibited Referral Behavior
+### 6.7 Prohibited Referral Conduct
+The following conduct is prohibited:
 - Self-referrals
 - Spam
-- False/misleading claims
-- Brand misuse
+- False or misleading claims
+- Misuse of the Company's brand
 - Unlawful marketing conduct
 
-### 6.8 Disclosure Duty
-Affiliates/referrers must clearly disclose referral relationship in line with CPA advertising fairness requirements.
+### 6.8 Duty of Disclosure
+Affiliates and referrers must clearly disclose the existence of the referral relationship, in accordance with the advertising fairness requirements of the CPA.
 
 ---
 
-## 7) 18+ Verification Policy
+## 7) Age (18+) Verification Policy
 
 ### 7.1 Provider
-Provider pending final legal/procurement signoff. Candidate vendors include ThisIsMe, Smile ID, LexisNexis.
+Selection of the verification provider remains pending final legal and procurement sign-off. Candidate vendors include ThisIsMe, Smile ID, and LexisNexis.
 
 ### 7.2 Verification Inputs
-Each partner separately:
+Each partner separately provides:
 - SA ID number
-- ID photo/document capture
-- Selfie
+- Photograph/capture of identity document
+- Selfie photograph
 - Liveness check
 - Age calculation result
 
-### 7.3 Outcome
-- Pass: verification status retained (pass/fail + timestamp)
-- Fail: platform access restrictions enforced
-- Manual review target: within 24h where supported
+### 7.3 Verification Outcome
+- Where verification is successful: the verification status (pass/fail, together with a timestamp) is retained
+- Where verification fails: access restrictions are enforced
+- Manual review is targeted to be completed within twenty-four (24) hours, where supported by the provider
 
 ### 7.4 Data Handling
-- Encrypt verification data at rest and in transit
-- Retain raw ID/selfie/liveness artifacts only during processing (target max 24h)
-- Delete raw media post-verification unless retention is legally mandated
-- Retain only minimum verification outcome metadata for audit/fraud/legal defense
+- Verification data is encrypted at rest and in transit
+- Raw identity document, selfie, and liveness artifacts are retained only for the duration of processing (targeted maximum of twenty-four (24) hours)
+- Raw media is deleted following verification, unless retention is legally mandated
+- Only the minimum verification outcome metadata necessary for audit, fraud prevention, or legal defense purposes is retained
 
 ---
 
-## 8) Data Processing / Operators
+## 8) Data Processing and Operators
 
 ### 8.1 POPIA Roles
 - Responsible Party: BA MABULANE (PTY) LTD
-- Operators: Ozow, Paystack, Neon, Vercel (role allocation to be finalized in contracts)
+- Operators: Ozow, Paystack, Neon, and Vercel (allocation of roles to be finalized by way of contract)
 
 ### 8.2 Data Minimization
-Operators receive only minimum required data for their function (e.g., amount, reference, user contact/payment identifiers).
+Operators receive only the minimum data required to perform their respective functions (for example, transaction amount, reference number, and user contact/payment identifiers).
 
 ### 8.3 Contractual Controls
-Execute and store signed DPAs/operator terms with:
+The Company shall execute and retain signed data processing agreements or equivalent operator terms with:
 - Ozow
 - Paystack
 - Neon
 - Vercel
 
 ### 8.4 Cross-Border Controls
-Where data flows outside SA, apply POPIA Sec 72 safeguards and document transfer basis.
+Where personal information is transferred outside the borders of South Africa, the safeguards prescribed under section 72 of POPIA shall apply, and the basis for such transfer shall be documented.
 
 ---
 
-## 9) Website / Checkout Disclosure Baseline (ECTA Sec 43)
+## 9) Website and Checkout Disclosure Baseline (Section 43 of ECTA)
 
-Attorney to confirm and finalize visible disclosures including:
+The attorney is to confirm and finalize the following visible disclosures:
 - Full legal entity name: **BA MABULANE (PTY) LTD**
 - Registration number: **2026 / 258617 / 07**
 - Tax Number / SARS Taxpayer Reference Number: **9606264225**
 - Physical address: **GA Mokgotho, N201, Burgersfort, Limpopo, 1160, South Africa**
-- Contact channels: privacy@sexsocialization.com | mokolalucky@gmail.com | 072 882 6249
+- Contact channels: privacy@sexsocialization.com (actively monitored) | mokolalucky@gmail.com | 072 882 6249
 - Material terms and cancellation rights
 - Pricing and billing transparency
-- Complaint process and regulator contact references where required
+- Complaint process and relevant regulator contact references, where required
 
 ---
 
-## 10) Lawyer Completion Checklist
+## 10) Attorney Completion Checklist
 
-1. ~~Register Information Officer with SA Information Regulator~~ ✓ **Details provided** (Pending formal registration)
-2. Finalize POPIA + PAIA manual and governance documents  
-3. ~~Insert legal entity and registration details across all policies~~ ✓ **COMPLETE**
-4. Finalize/execute DPAs with Neon, Vercel, Ozow, Paystack  
-5. Validate subscription/renewal/cooling wording under CPA/ECTA  
-6. Validate referral and disclosure model under CPA  
-7. Confirm age-verification provider lawfulness and retention compliance  
-8. Approve final disclaimer and publish-ready legal copy
+1. ~~Register the Information Officer with the Information Regulator of South Africa~~ ✓ **Details provided** (formal registration pending)
+2. Finalize the POPIA and PAIA manual and associated governance documents
+3. ~~Insert legal entity and registration details across all policies~~ ✓ **Complete**
+4. Finalize and execute data processing agreements with Neon, Vercel, Ozow, and Paystack
+5. Validate the subscription, renewal, and cooling-off wording under the CPA and ECTA
+6. Validate the referral program and disclosure model under the CPA
+7. Confirm the lawfulness of the age-verification provider and the adequacy of its retention practices
+8. Approve the final disclaimer and publish-ready legal text
 
 ---
 
-## 11) Publishing & Version Control Notes
+## 11) Publishing and Version Control Notes
 
-Before publishing:
+Prior to publication, the Company shall:
 - ~~Replace all placeholders (Information Officer name, legal entity details)~~ ✓ **All added**
-- Provider selection (age-verification vendor) still pending
-- Confirm all legal references and section citations
-- Align product UI consent text with policy wording exactly
-- Version documents and keep changelog for legal audits
+- Finalize the selection of the age-verification vendor (still pending)
+- Confirm all legal references and statutory section citations
+- Align the product's user-interface consent text precisely with the wording of this policy
+- Maintain version control and a changelog of this document for legal audit purposes
 
-Recommended metadata:
+Recommended metadata to maintain:
 - Policy version number
 - Effective date
-- Last reviewed by counsel
+- Date last reviewed by counsel
 - Next scheduled review date
 
 ---
 
 ## 12) Contact
 
-**Primary legal/privacy contact:** mokolalucky@gmail.com | 072 882 6249  
+**Primary legal/privacy contact:** privacy@sexsocialization.com (actively monitored) | mokolalucky@gmail.com | 072 882 6249  
 **Company legal entity:** BA MABULANE (PTY) LTD  
 **CIPC Registration:** 2026 / 258617 / 07  
 **Tax Number / SARS Taxpayer Reference Number:** 9606264225  
 **Registered Office:** GA Mokgotho, N201, Burgersfort, Limpopo, 1160, South Africa  
-**Director & Information Officer:** Mokola Lucky Shai
+**Director and Information Officer:** Mokola Lucky Shai
 
 ---
 **End of consolidated draft**
