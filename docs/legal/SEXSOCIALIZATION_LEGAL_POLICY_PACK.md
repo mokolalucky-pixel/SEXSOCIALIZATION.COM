@@ -1,7 +1,7 @@
 # SEXSOCIALIZATION.COM — Legal Policy Pack (Consolidated)
 
-**Version:** Draft v1  
-**Last Updated:** 2026-09-02  
+**Version:** Draft v1.1  
+**Last Updated:** 2026-09-06  
 **Jurisdiction Focus:** South Africa (POPIA, CPA, ECTA)  
 **Status:** Draft pending attorney review and final company details
 
@@ -48,8 +48,11 @@ Final wording, legal basis, and enforceability must be confirmed by a qualified 
 ## 3) Privacy Policy (POPIA-Aligned Draft)
 
 ### 3.1 Responsible Party
-sexsocialization.com  
-Burgersfort, Limpopo, South Africa  
+**BA MABULANE (PTY) LTD**  
+Registration Number: 2026 / 258617 / 07  
+GA Mokgotho, N201  
+Burgersfort, Limpopo, 1160  
+South Africa  
 Contact: privacy@sexsocialization.com
 
 ### 3.2 Information Officer
@@ -83,7 +86,7 @@ To be registered/confirmed with the SA Information Regulator.
 - Session cookies
 
 ### 3.4 Special Personal Information (POPIA Sec 26)
-Sexual-life data is processed only when **both partners** separately opt in using explicit consent controls (e.g., optional feature checkbox for Men’s/Women’s/Mixed circles).
+Sexual-life data is processed only when **both partners** separately opt in using explicit consent controls (e.g., optional feature checkbox for Men's/Women's/Mixed circles).
 
 Consent logs must capture:
 - Timestamp
@@ -271,7 +274,7 @@ Each partner separately:
 ## 8) Data Processing / Operators
 
 ### 8.1 POPIA Roles
-- Responsible Party: sexsocialization.com
+- Responsible Party: BA MABULANE (PTY) LTD
 - Operators: Ozow, Paystack, Neon, Vercel (role allocation to be finalized in contracts)
 
 ### 8.2 Data Minimization
@@ -292,10 +295,10 @@ Where data flows outside SA, apply POPIA Sec 72 safeguards and document transfer
 ## 9) Website / Checkout Disclosure Baseline (ECTA Sec 43)
 
 Attorney to confirm and finalize visible disclosures including:
-- Full legal entity name
-- Registration number
-- Physical address
-- Contact channels
+- Full legal entity name: **BA MABULANE (PTY) LTD**
+- Registration number: **2026 / 258617 / 07**
+- Physical address: **GA Mokgotho, N201, Burgersfort, Limpopo, 1160, South Africa**
+- Contact channels: privacy@sexsocialization.com
 - Material terms and cancellation rights
 - Pricing and billing transparency
 - Complaint process and regulator contact references where required
@@ -306,7 +309,7 @@ Attorney to confirm and finalize visible disclosures including:
 
 1. Register Information Officer with SA Information Regulator  
 2. Finalize POPIA + PAIA manual and governance documents  
-3. Insert legal entity and registration details across all policies  
+3. ~~Insert legal entity and registration details across all policies~~ ✓ **COMPLETE**
 4. Finalize/execute DPAs with Neon, Vercel, Ozow, Paystack  
 5. Validate subscription/renewal/cooling wording under CPA/ECTA  
 6. Validate referral and disclosure model under CPA  
@@ -318,7 +321,9 @@ Attorney to confirm and finalize visible disclosures including:
 ## 11) Publishing & Version Control Notes
 
 Before publishing:
-- Replace all placeholders (Information Officer name, legal entity details, provider selection)
+- ~~Replace all placeholders (Information Officer name, legal entity details, provider selection)~~ ✓ **Legal entity details added**
+- Information Officer name still pending
+- Provider selection (age-verification vendor) still pending
 - Confirm all legal references and section citations
 - Align product UI consent text with policy wording exactly
 - Version documents and keep changelog for legal audits
@@ -333,7 +338,11 @@ Recommended metadata:
 
 ## 12) Contact
 
-Primary legal/privacy contact: privacy@sexsocialization.com
+**Primary legal/privacy contact:** privacy@sexsocialization.com  
+**Company legal entity:** BA MABULANE (PTY) LTD  
+**CIPC Registration:** 2026 / 258617 / 07  
+**Registered Office:** GA Mokgotho, N201, Burgersfort, Limpopo, 1160, South Africa  
+**Director:** Shai Mokola
 
 ---
 **End of consolidated draft**
